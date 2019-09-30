@@ -13,6 +13,8 @@ func newRouter() *mux.Router  {
 	r := mux.NewRouter()
 	r.HandleFunc("/mock", handler).Methods("GET")
 
+	r.HandleFunc("/variableConfig", variableConfigWebGetHandler).Methods("GET")
+
 	staticFileDirectory := http.Dir("./assets/")
 
 	staticFileHandler := http.StripPrefix("", http.FileServer(staticFileDirectory))
@@ -31,6 +33,8 @@ func main() {
 	r := newRouter()
 
 	http.ListenAndServe(":8080",r)
+
+
 
 	fmt.Println("exiting mocking main")
 }

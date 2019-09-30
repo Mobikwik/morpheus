@@ -3,14 +3,15 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	)
+	"net/http"
+)
 
 type VariableConfig struct {
 	Name,DataType,Regex string
 	MinLength,MaxLength int
 }
 
-func readMasterConfig(){
+func readVariableConfig() []VariableConfig {
 
 	variableConfigJson:=`[
 
@@ -49,10 +50,27 @@ func readMasterConfig(){
 
 	var variableConfig []VariableConfig
 	json.Unmarshal([]byte(variableConfigJson), &variableConfig)
-	fmt.Printf("variableConfig values: %s", variableConfig)
+	fmt.Println("variableConfig values: ", variableConfig)
+
+	return variableConfig
 
 }
 
-func main() {
-	readMasterConfig()
+func variableConfigWebGetHandler(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Println("inside variableConfigWebGetHandler")
+
+	var variableConfigArr []VariableConfig
+
+	variableConfigArr = readVariableConfig()
+
+	fmt.Println("parsed json of variables is ",variableConfigArr)
+
+	fmt.Fprintf(w,"%v",variableConfigArr)
+
+	fmt.Println("exiting variableConfigWebGetHandler")
 }
+
+/*func main() {
+	readVariableConfig()
+}*/
