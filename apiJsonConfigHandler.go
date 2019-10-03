@@ -23,9 +23,10 @@ type Response struct {
 
 type ApiConfig struct {
 
-	Url string
-	Method string
-	RequestConfig Request
+	Id             string
+	Url            string
+	Method         string
+	RequestConfig  Request
 	ResponseConfig Response
 
 }
@@ -35,7 +36,8 @@ func readApiConfigFromDB() string  {
 
 	apiConfigJson:=`[
 {
-	"url": "api/p/wallet/debit",
+	"id":"1",	
+	"url": "/api/p/wallet/debit",
 	"method": "POST",
 	"requestConfig": {
 		"responseDelayInSeconds": 30,
@@ -83,6 +85,14 @@ func readApiConfigFromDB() string  {
 
 }
 
+func getApiConfigArray() []ApiConfig  {
+
+	var apiConfigJson = readApiConfigFromDB()
+
+	return parseApiConfig(apiConfigJson)
+
+}
+
 func parseApiConfig(apiConfigJson string) []ApiConfig {
 
 	log.Print(apiConfigJson)
@@ -108,9 +118,7 @@ func apiConfigWebGetHandler(w http.ResponseWriter, r *http.Request) {
 
 	var apiConfigArr []ApiConfig
 
-	var apiConfigJson = readApiConfigFromDB()
-
-	apiConfigArr = parseApiConfig(apiConfigJson)
+	apiConfigArr = getApiConfigArray()
 
 	log.Print("parsed json of variables is ",apiConfigArr)
 

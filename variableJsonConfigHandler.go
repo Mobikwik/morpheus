@@ -8,7 +8,7 @@ import (
 )
 
 type VariableConfig struct {
-	Name,DataType,Regex string
+	Id,Name,DataType,Regex string
 	MinLength,MaxLength,FixLength,MinValue,MaxValue *int
 	PossibleStringValues []string
 	PossibleIntValues []int
@@ -19,6 +19,7 @@ func readVariableJsonFromDB() string {
 	variableConfigJson:=`[
 
 {
+	"id":"1",
 	"name": "orderId",
 	"dataType": "string",
 	"minLength": 4,
@@ -28,6 +29,7 @@ func readVariableJsonFromDB() string {
 
 ,
 {
+	"id":"2",
 	"name": "bal",
 	"dataType": "double",
 	"minValue": 0,
@@ -36,6 +38,7 @@ func readVariableJsonFromDB() string {
 }
 ,
 {
+	"id":"3",
 	"name": "AuthToken",
 	"dataType": "string",
 	"fixLength": 20,
@@ -43,6 +46,7 @@ func readVariableJsonFromDB() string {
 }
 ,
 {
+	"id":"4",
 	"name": "ClientId",
 	"dataType": "integer",
 	"possibleIntValues": [3,9]
