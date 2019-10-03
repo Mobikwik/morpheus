@@ -1,19 +1,23 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"github.com/gorilla/mux"
 	"net/http"
 )
 
 func newRouter() *mux.Router  {
 
-	fmt.Println("entering newRouter method")
+	log.Print("entering newRouter method")
 
 	r := mux.NewRouter()
-	r.HandleFunc("/mock", handler).Methods("GET")
 
+	// Handlers for APIs that return configs
 	r.HandleFunc("/variableConfig", variableConfigWebGetHandler).Methods("GET")
+	r.HandleFunc("/apiConfig", apiConfigWebGetHandler).Methods("GET")
+
+	// Handler for mocking
+	r.PathPrefix("/").HandlerFunc(mockingRequestHandler).Methods("GET","POST")
 
 	staticFileDirectory := http.Dir("./assets/")
 
@@ -21,27 +25,22 @@ func newRouter() *mux.Router  {
 
 	r.PathPrefix("/").Handler(staticFileHandler).Methods("GET")
 
-	fmt.Println("exiting newRouter method")
+	log.Print("exiting newRouter method")
 
 	return r
 }
 
 func main() {
 
-	fmt.Println("entering mocking main")
+	log.Print("entering mocking main")
 
 	r := newRouter()
+
+	//http.HandleFunc("/", mockingRequestHandler)
 
 	http.ListenAndServe(":8080",r)
 
 
 
-	fmt.Println("exiting mocking main")
-}
-
-func handler(w http.ResponseWriter, r *http.Request) {
-	var msg string = "Welcome to Morpheus! Please use complete api url for mocking instead of "
-	var url string = r.URL.Path
-
-	fmt.Fprintf(w,msg+url)
+	log.Print("exiting mocking main")
 }
