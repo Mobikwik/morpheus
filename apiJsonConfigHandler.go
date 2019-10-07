@@ -11,14 +11,14 @@ type Request struct{
 
 	ResponseDelayInSeconds int
 	RequestHeaders map[string]string
-	RequestJsonBody interface{}
+	RequestJsonBody map[string]interface{}
 }
 
 type Response struct {
 
 	HttpCode int
 	ResponseHeaders map[string]string
-	ResponseJsonBody interface{}
+	ResponseJsonBody map[string]interface{}
 }
 
 type ApiConfig struct {
@@ -28,7 +28,6 @@ type ApiConfig struct {
 	Method         string
 	RequestConfig  Request
 	ResponseConfig Response
-
 }
 
 
@@ -68,8 +67,11 @@ func readApiConfigFromDB() string  {
 			"statusCode": "$statusCode",
 			"statusMsg": "Debit Success",
 			"orderId": "requestJsonBody.txnDetails.orderId",
+			"amountDetails":{
+				"amountDebited":"requestJsonBody.txnDetails.amount"
+			},
 			"balanceData": {
-				"mainBalance": "$bal",
+				"mainBalance": "1023",
 				"buckets": {
 					"bucket1": "$bal",
 					"bucket2": "$bal",
