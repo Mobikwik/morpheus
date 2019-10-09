@@ -10,14 +10,18 @@ import (
 type Request struct{
 
 	ResponseDelayInSeconds int
-	RequestHeaders map[string]string
+	// Header config values can be of type string or []string.Hence using generic interface{} type
+	RequestHeaders map[string]interface{}
+	// request body can have many types as string,numeric,array,another struct etc.Hence using generic interface{} type
 	RequestJsonBody map[string]interface{}
 }
 
 type Response struct {
 
 	HttpCode int
-	ResponseHeaders map[string]string
+	// Header config values can be of type string or []string.Hence using generic interface{} type
+	ResponseHeaders map[string]interface{}
+	// response body can have many types as string,numeric,array,another struct etc.Hence using generic interface{} type
 	ResponseJsonBody map[string]interface{}
 }
 
@@ -41,7 +45,7 @@ func readApiConfigFromDB() string  {
 	"requestConfig": {
 		"responseDelayInSeconds": 30,
 		"requestHeaders": {
-			"Content-Type": "application/json",
+			"Content-Type": ["application/json","text/html","application/pdf"],
 			"Authorization": "$Auth",
 			"X-DeviceId": "$DeviceId",
 			"X-ClientId": "$ClientId",
@@ -52,7 +56,8 @@ func readApiConfigFromDB() string  {
 			"module": "wallet",
 			"txnDetails": {
 				"orderId": "$orderId",
-				"amount": "$amt"
+				"amount": "$amt",
+				"txnTypes":[1,2,3,4]
 			}
 		}
 	},
@@ -61,12 +66,19 @@ func readApiConfigFromDB() string  {
 		"responseHeaders": {
 			"X-DeviceId": "requestHeaders.X-DeviceId",
 			"X-ClientId": "requestHeaders.X-ClientId",
+			"AllContent-Types": "requestHeaders.Content-Type",
+			"ConsideredContent-Types": ["requestHeaders.Content-Type[0]","requestHeaders.Content-Type[1]"],
+			"SelectedContent-Type": ["requestHeaders.Content-Type[0]"],
+			"DummyContent-Type": ["requestHeaders.Content-Type[0]","DummyContentTypeValue"],
 			"Checksum": "fdjfnfffewfwef"
 		},
 		"responseJsonBody": {
 			"statusCode": "$statusCode",
 			"statusMsg": "Debit Success",
 			"orderId": "requestJsonBody.txnDetails.orderId",
+			"consideredTxnTypes":	["requestJsonBody.txnTypes[0]","requestJsonBody.txnTypes[1]"],
+			"processedTxnType":	"requestJsonBody.txnTypes[0]",
+			"allTxnTypes":"requestJsonBody.txnTypes",
 			"amountDetails":{
 				"amountDebited":"requestJsonBody.txnDetails.amount"
 			},

@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -12,7 +14,8 @@ const (
 	ContentTypeHeaderValueJson = "application/json"
 )
 
-func doMocking(url, requestMethod string, requestBody []byte, requestHeader map[string][]string) (string,string,map[string][]string ) {
+func doMocking(url, requestMethod string, requestBody []byte,
+		requestHeader map[string][]string) (string,string,map[string][]string) {
 
 	var responseBody, responseContentType string
 	var responseHeaders map[string][]string
@@ -45,7 +48,8 @@ func doMocking(url, requestMethod string, requestBody []byte, requestHeader map[
 	return responseBody,responseContentType,responseHeaders
 }
 
-func getMockedResponse(apiConfig *ApiConfig, requestBodyJsonMap map[string]interface{}, requestHeaderMap map[string][]string) (string, string, map[string][]string) {
+func getMockedResponse(apiConfig *ApiConfig, requestBodyJsonMap map[string]interface{},
+		requestHeaderMap map[string][]string) (string, string, map[string][]string) {
 
 	var responseBody, responseContentType string
 	var responseHeaders map[string][]string
@@ -53,13 +57,13 @@ func getMockedResponse(apiConfig *ApiConfig, requestBodyJsonMap map[string]inter
 	responseBodyConfigJsonMap := apiConfig.ResponseConfig.ResponseJsonBody
 	// set the values in response json map based on response config
 	setResponseBodyMap(responseBodyConfigJsonMap, requestBodyJsonMap)
+	responseBodyBytes,err := json.Marshal(responseBodyConfigJsonMap)
 
 	// set response headers
 	responseHeaderConfigJsonMap := apiConfig.ResponseConfig.ResponseHeaders
 	// set the values in response json map based on response config
 	setResponseHeaderMap(responseHeaderConfigJsonMap, requestHeaderMap)
 
-	responseBodyBytes,err := json.Marshal(responseBodyConfigJsonMap)
 	if err==nil {
 		responseBody = string(responseBodyBytes)
 	}
@@ -68,21 +72,63 @@ func getMockedResponse(apiConfig *ApiConfig, requestBodyJsonMap map[string]inter
 
 }
 
-func setResponseHeaderMap(responseHeaderConfigJsonMap map[string]string, requestHeaderMap map[string][]string) {
+func setResponseHeaderMap(responseHeaderConfigJsonMap map[string]interface{}, requestHeaderMap map[string][]string) {
 
-	for key, responseKeyValue := range responseHeaderConfigJsonMap {
-		fmt.Println("key:", key, "v:", responseKeyValue)
+	for headerName, responseConfigKeyValueGenericType := range responseHeaderConfigJsonMap {
 
-		if strings.HasPrefix(responseKeyValue, "requestHeaderBody.") {
-			strValueSplit := strings.Split(responseKeyValue, ".")
+		log.Printf("setting value for response header %s of type %T config value %s",
+			headerName,responseConfigKeyValueGenericType,responseConfigKeyValueGenericType)
 
-			if len(strValueSplit) < 2 {
-				// throw error
-				log.Print("invalid response header configuration")
+		var responseHeaderValue [10]string // TODO define array size properly
+
+		switch responseConfigKeyValue:= responseConfigKeyValueGenericType.(type) {
+		case string:
+			responseHeaderValue[0] = getValueFromRequestHeader(responseConfigKeyValue, requestHeaderMap)
+			log.Printf("setting single value %s for header %s",responseHeaderValue[0],headerName)
+		case []string:
+			for i, responseConfigKeyValueSingle := range responseConfigKeyValue {
+				responseHeaderValue[i] = getValueFromRequestHeader(responseConfigKeyValueSingle, requestHeaderMap)
+				log.Printf("adding array value %s on index %d for header %s ",responseHeaderValue[i],i,headerName)
 			}
-			responseHeaderConfigJsonMap[key]=requestHeaderMap[strValueSplit[1]][0]
+		case  []interface {}:
+			log.Printf("handling response header value config for header %s config type is %T",headerName,responseConfigKeyValueGenericType)
+		default:
+			log.Printf("invalid response header value config for header %s config type is %T",headerName,responseConfigKeyValueGenericType)
+
 		}
+
+		log.Printf("setting final value for response header %s = %s",headerName,responseHeaderValue)
+		responseHeaderConfigJsonMap[headerName] = responseHeaderValue
 	}
+}
+
+func getValueFromRequestHeader(responseConfigKeyValue string, requestHeaderMap map[string][]string) string {
+	if strings.HasPrefix(responseConfigKeyValue, "requestHeaders.") {
+		strValueSplit := strings.Split(responseConfigKeyValue, ".")
+
+		if len(strValueSplit) < 2 {
+			// throw error
+			log.Print("invalid response header configuration")
+		}
+		/* golang converts request headers to canonical form, so we need to do the same while fetching header values
+		https://godoc.org/net/http#CanonicalHeaderKey*/
+		canonicalHeaderName := http.CanonicalHeaderKey(strValueSplit[1])
+		// if config is like requestHeaders.Content-Type[1], get the array index part
+		openingBracketIndex := strings.Index(strValueSplit[1], "[")
+		closingBracketIndex := strings.Index(strValueSplit[1], "]")
+		if openingBracketIndex == len(strValueSplit[1])-3 && closingBracketIndex == len(strValueSplit[1])-1 {
+			arrIndex := strValueSplit[1][openingBracketIndex:closingBracketIndex]
+			arrIndexInt, _ := strconv.Atoi(arrIndex)
+			// header array has just one value
+			return requestHeaderMap[canonicalHeaderName][arrIndexInt]
+		} else {
+			return requestHeaderMap[canonicalHeaderName][0]
+		}
+	} else {
+		return responseConfigKeyValue
+	}
+	// TODO return nil from here if it is a good practice to return nil for string type
+	return ""
 }
 
 
