@@ -75,18 +75,20 @@ func readApiConfigFromDB() string  {
 			"Checksum": "fdjfnfffewfwef"
 
 		},
-		"responseJsonBody": {
+		
+"responseJsonBody": {
+			"actionDone": "requestJsonBody.action",
 			"statusCode": "$statusCode",
 			"statusMsg": "Debit Success",
 			"orderId": "requestJsonBody.txnDetails.orderId",
-			"consideredTxnTypes":["requestJsonBody.txnTypes[0]","requestJsonBody.txnTypes[1]"],
-			"processedTxnType":	"requestJsonBody.txnTypes[0]",
-			"allTxnTypes":"requestJsonBody.txnTypes",
+			"consideredTxnTypes":["requestJsonBody.txnDetails.txnTypes[0]","requestJsonBody.txnDetails.txnTypes[1]"],
+			"processedTxnType":	"requestJsonBody.txnDetails.txnTypes[0]",
+			"allTxnTypes":"requestJsonBody.txnDetails.txnTypes",
 			"amountDetails":{
 				"amountDebited":"requestJsonBody.txnDetails.amount"
 			},
 			"balanceData": {
-				"mainBalance": "1023",
+				"mainBalance": 1023,
 				"buckets": {
 					"bucket1": "$bal",
 					"bucket2": "$bal",
