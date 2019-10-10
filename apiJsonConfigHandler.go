@@ -64,19 +64,22 @@ func readApiConfigFromDB() string  {
 	"responseConfig": {
 		"httpCode": 200,
 		"responseHeaders": {
+			
+
 			"X-DeviceId": "requestHeaders.X-DeviceId",
 			"X-ClientId": "requestHeaders.X-ClientId",
 			"AllContent-Types": "requestHeaders.Content-Type",
 			"ConsideredContent-Types": ["requestHeaders.Content-Type[0]","requestHeaders.Content-Type[1]"],
-			"SelectedContent-Type": ["requestHeaders.Content-Type[0]"],
+			"SelectedContent-Type": "requestHeaders.Content-Type[0]",
 			"DummyContent-Type": ["requestHeaders.Content-Type[0]","DummyContentTypeValue"],
 			"Checksum": "fdjfnfffewfwef"
+
 		},
 		"responseJsonBody": {
 			"statusCode": "$statusCode",
 			"statusMsg": "Debit Success",
 			"orderId": "requestJsonBody.txnDetails.orderId",
-			"consideredTxnTypes":	["requestJsonBody.txnTypes[0]","requestJsonBody.txnTypes[1]"],
+			"consideredTxnTypes":["requestJsonBody.txnTypes[0]","requestJsonBody.txnTypes[1]"],
 			"processedTxnType":	"requestJsonBody.txnTypes[0]",
 			"allTxnTypes":"requestJsonBody.txnTypes",
 			"amountDetails":{

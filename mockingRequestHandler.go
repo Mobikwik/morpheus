@@ -40,14 +40,18 @@ func mockingRequestHandler(w http.ResponseWriter, r *http.Request) {
 
 		var responseBody, responseContentType, responseHeaders = doMocking(url,r.Method,bodyBytes,r.Header)
 
-		for k,v:= range responseHeaders {
-			w.Header()[k]=v
-
-		}
 		log.Println("mocked response is ",responseBody,responseContentType,responseHeaders)
+
+		for headerName,headerValue:= range responseHeaders {
+			w.Header()[headerName]=headerValue
+		}
+		// print final api response
+		fmt.Fprintf(w,"%v",responseBody)
 	}
 
 	log.Print("exiting mockingRequestHandler")
+
+
 }
 
 /*func main() {

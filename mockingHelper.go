@@ -24,7 +24,7 @@ func doMocking(url, requestMethod string, requestBody []byte,
 
 
 	if requestHeader[ContentTypeHeaderName]!=nil &&
-		strings.EqualFold(ContentTypeHeaderValueJson,requestHeader[ContentTypeHeaderName][0]) {
+		strings.Contains(requestHeader[ContentTypeHeaderName][0],ContentTypeHeaderValueJson) {
 		var requestBodyJson map[string]interface{}
 		err := json.Unmarshal(requestBody, &requestBodyJson)
 		if err != nil {
@@ -43,8 +43,6 @@ func doMocking(url, requestMethod string, requestBody []byte,
 	} else{
 		log.Print("invalid Content-Type header")
 	}
-
-	log.Print("exiting doMocking")
 	return responseBody,responseContentType,responseHeaders
 }
 
@@ -62,7 +60,7 @@ func getMockedResponse(apiConfig *ApiConfig, requestBodyJsonMap map[string]inter
 	// set response headers
 	responseHeaderConfigJsonMap := apiConfig.ResponseConfig.ResponseHeaders
 	// set the values in response json map based on response config
-	setResponseHeaderMap(responseHeaderConfigJsonMap, requestHeaderMap)
+	responseHeaders=setResponseHeaderMap(responseHeaderConfigJsonMap, requestHeaderMap)
 
 	if err==nil {
 		responseBody = string(responseBodyBytes)
@@ -72,37 +70,52 @@ func getMockedResponse(apiConfig *ApiConfig, requestBodyJsonMap map[string]inter
 
 }
 
-func setResponseHeaderMap(responseHeaderConfigJsonMap map[string]interface{}, requestHeaderMap map[string][]string) {
+func setResponseHeaderMap(responseHeaderConfigJsonMap map[string]interface{}, requestHeaderMap map[string][]string) map[string][]string {
 
+	var responseHeaderValuesJsonMap = make(map[string][]string)
 	for headerName, responseConfigKeyValueGenericType := range responseHeaderConfigJsonMap {
 
 		log.Printf("setting value for response header %s of type %T config value %s",
 			headerName,responseConfigKeyValueGenericType,responseConfigKeyValueGenericType)
 
-		var responseHeaderValue [10]string // TODO define array size properly
+		var responseHeaderValueArr []string
 
 		switch responseConfigKeyValue:= responseConfigKeyValueGenericType.(type) {
 		case string:
-			responseHeaderValue[0] = getValueFromRequestHeader(responseConfigKeyValue, requestHeaderMap)
-			log.Printf("setting single value %s for header %s",responseHeaderValue[0],headerName)
+			responseHeaderValueArr=getValueFromRequestHeader(responseConfigKeyValue, requestHeaderMap)
+			log.Printf("setting single value %s for header %s", responseHeaderValueArr,headerName)
 		case []string:
 			for i, responseConfigKeyValueSingle := range responseConfigKeyValue {
-				responseHeaderValue[i] = getValueFromRequestHeader(responseConfigKeyValueSingle, requestHeaderMap)
-				log.Printf("adding array value %s on index %d for header %s ",responseHeaderValue[i],i,headerName)
+				responseHeaderValueArr = append(responseHeaderValueArr, getValueFromRequestHeader(responseConfigKeyValueSingle, requestHeaderMap)[0])
+				log.Printf("adding array value %s on index %d for header %s ", responseHeaderValueArr[i],i,headerName)
 			}
-		case  []interface {}:
+		case  []interface{}:
 			log.Printf("handling response header value config for header %s config type is %T",headerName,responseConfigKeyValueGenericType)
+
+			for i, responseConfigKeyValueSingle := range responseConfigKeyValue {
+				log.Printf("getting value for config %s",responseConfigKeyValueSingle)
+				responseConfigKeyValueSingleStr, ok := responseConfigKeyValueSingle.(string)
+				if ok {
+					responseHeaderValueArr = append(responseHeaderValueArr, getValueFromRequestHeader(responseConfigKeyValueSingleStr, requestHeaderMap)[0])
+					log.Printf("adding array value %s on index %d for header %s ", responseHeaderValueArr[i],i,headerName)
+				}
+
+			}
+
 		default:
 			log.Printf("invalid response header value config for header %s config type is %T",headerName,responseConfigKeyValueGenericType)
 
 		}
 
-		log.Printf("setting final value for response header %s = %s",headerName,responseHeaderValue)
-		responseHeaderConfigJsonMap[headerName] = responseHeaderValue
+		log.Printf("setting final value for response header %s = %s",headerName, responseHeaderValueArr)
+		//responseHeaderConfigJsonMap[headerName] = responseHeaderValueArr
+		responseHeaderValuesJsonMap[headerName] = responseHeaderValueArr
 	}
+	return responseHeaderValuesJsonMap
 }
 
-func getValueFromRequestHeader(responseConfigKeyValue string, requestHeaderMap map[string][]string) string {
+func getValueFromRequestHeader(responseConfigKeyValue string, requestHeaderMap map[string][]string) []string {
+	log.Printf("inside getValueFromRequestHeader, getting value for response config %s",responseConfigKeyValue)
 	if strings.HasPrefix(responseConfigKeyValue, "requestHeaders.") {
 		strValueSplit := strings.Split(responseConfigKeyValue, ".")
 
@@ -113,22 +126,34 @@ func getValueFromRequestHeader(responseConfigKeyValue string, requestHeaderMap m
 		/* golang converts request headers to canonical form, so we need to do the same while fetching header values
 		https://godoc.org/net/http#CanonicalHeaderKey*/
 		canonicalHeaderName := http.CanonicalHeaderKey(strValueSplit[1])
-		// if config is like requestHeaders.Content-Type[1], get the array index part
+		/* if config is like $requestHeaders.Content-Type[2], get the array index part,i.e. 2
+		strValueSplit[1] = Content-Type[2], len(strValueSplit[1]) =15,so:
+		openingBracketIndex(index of [) = 12 = 15-3
+		closingBracketIndex(index of ]) = 14 = 15-1
+		arrIndex will have value 2
+		*/
 		openingBracketIndex := strings.Index(strValueSplit[1], "[")
 		closingBracketIndex := strings.Index(strValueSplit[1], "]")
+
 		if openingBracketIndex == len(strValueSplit[1])-3 && closingBracketIndex == len(strValueSplit[1])-1 {
-			arrIndex := strValueSplit[1][openingBracketIndex:closingBracketIndex]
-			arrIndexInt, _ := strconv.Atoi(arrIndex)
-			// header array has just one value
-			return requestHeaderMap[canonicalHeaderName][arrIndexInt]
+			// remove [2] part from Content-Type[2], set canonicalHeaderName to Content-Type
+			canonicalHeaderName=canonicalHeaderName[0:openingBracketIndex]
+			arrIndex := strValueSplit[1][openingBracketIndex+1:closingBracketIndex]
+			arrIndexInt, err := strconv.Atoi(arrIndex) // convert string to int
+			if err!=nil {
+				log.Print("error parsing string to int ",err)
+				return []string{}
+			}
+			return []string{requestHeaderMap[canonicalHeaderName][arrIndexInt]}
 		} else {
-			return requestHeaderMap[canonicalHeaderName][0]
+			// if the config is like $requestHeaders.Content-Type,return entire array of this header value
+			return requestHeaderMap[canonicalHeaderName]
 		}
 	} else {
-		return responseConfigKeyValue
+		// return the value inside config as it is
+		return []string{responseConfigKeyValue}
 	}
-	// TODO return nil from here if it is a good practice to return nil for string type
-	return ""
+	return []string{}
 }
 
 
