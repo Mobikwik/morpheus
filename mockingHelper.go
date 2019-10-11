@@ -33,15 +33,15 @@ func doMocking(url, requestMethod string, requestBody []byte,
 
 		matchingApiConfig := findMatchingApiConfig(url,requestMethod)
 		if matchingApiConfig == nil {
-			// return nil values or throw error
 			log.Printf("no matching config found for this api request")
 			responseBody="no matching config found for this api request"
 		} else {
-			log.Print("found matching api config ",matchingApiConfig)
+			log.Printf("found matching api config with id %s value %v ",matchingApiConfig.Id,matchingApiConfig)
 			return getMockedResponse(matchingApiConfig,requestBodyJson,requestHeader)
 		}
 	} else{
-		log.Print("invalid Content-Type header")
+		log.Print("invalid Content-Type header",requestHeader[ContentTypeHeaderName])
+		responseBody= fmt.Sprintf("%s %v","invalid Content-Type header",requestHeader[ContentTypeHeaderName])
 	}
 	return responseBody,responseHeaders
 }
@@ -56,18 +56,15 @@ func getMockedResponse(apiConfig *ApiConfig, requestBodyJsonMap map[string]inter
 	// set the values in response json map based on response config
 	setResponseBodyMap(responseBodyConfigJsonMap, requestBodyJsonMap)
 	responseBodyBytes,err := json.Marshal(responseBodyConfigJsonMap)
-
+	if err==nil {
+		responseBody = string(responseBodyBytes)
+	}
 	// set response headers
 	responseHeaderConfigJsonMap := apiConfig.ResponseConfig.ResponseHeaders
 	// set the values in response json map based on response config
 	responseHeaders=setResponseHeaderMap(responseHeaderConfigJsonMap, requestHeaderMap)
 
-	if err==nil {
-		responseBody = string(responseBodyBytes)
-	}
-
 	return responseBody, responseHeaders
-
 }
 
 func setResponseHeaderMap(responseHeaderConfigJsonMap map[string]interface{}, requestHeaderMap map[string][]string) map[string][]string {
