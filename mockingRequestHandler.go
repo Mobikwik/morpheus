@@ -18,7 +18,7 @@ func mockingRequestHandler(w http.ResponseWriter, r *http.Request) {
 		log.Print("no url provided for mocking")
 		fmt.Fprintf(w,"%s", "Welcome to Morpheus, an api mocking framework by Mobikwik." +
 			"Please use complete api url for mocking instead of /." +
-			"For example: \"http://localhost:8080/api/p/wallet/debit\"")
+			"For example: \"http://localhost:8080/api/customer/getOrders\"")
 		return
 	} else {
 		var body =r.Body

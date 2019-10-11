@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 )
 
 type Request struct{
@@ -184,4 +185,29 @@ func apiConfigWebGetHandler(w http.ResponseWriter, r *http.Request) {
 	log.Print("parsed json of variables is ",apiConfigArr)
 	fmt.Fprintf(w,"%v",apiConfigArr)
 	log.Print("exiting apiConfigWebGetHandler")
+}
+
+
+func findMatchingApiConfig(urlToSearch, requestMethod string) *ApiConfig {
+	//var matchingApiConfig *ApiConfig
+
+	log.Printf("inside findMatchingApiConfig to find matching config for url %s requestMethod %s",urlToSearch,requestMethod)
+
+	var apiConfigArr = getApiConfigArray()
+
+	if apiConfigArr!=nil {
+
+		for _,apiConfig := range apiConfigArr {
+
+			if strings.EqualFold(apiConfig.Url,urlToSearch) && strings.EqualFold(apiConfig.Method,requestMethod) {
+				log.Print("matching api config found with Id ",apiConfig.Id)
+				return &apiConfig
+			}
+
+		}
+	}
+
+	log.Print("exiting findMatchingApiConfig")
+
+	return nil
 }

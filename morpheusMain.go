@@ -31,16 +31,8 @@ func newRouter() *mux.Router  {
 }
 
 func main() {
-
 	log.Print("entering mocking main")
-
 	r := newRouter()
-
-	//http.HandleFunc("/", mockingRequestHandler)
-
 	http.ListenAndServe(":8080",r)
-
-
-
 	log.Print("exiting mocking main")
 }
