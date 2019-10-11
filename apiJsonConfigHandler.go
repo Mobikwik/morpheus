@@ -64,8 +64,6 @@ func readApiConfigFromDB() string  {
 	"responseConfig": {
 		"httpCode": 200,
 		"responseHeaders": {
-			
-
 			"X-DeviceId": "requestHeaders.X-DeviceId",
 			"X-ClientId": "requestHeaders.X-ClientId",
 			"AllContent-Types": "requestHeaders.Content-Type",
@@ -73,10 +71,9 @@ func readApiConfigFromDB() string  {
 			"SelectedContent-Type": "requestHeaders.Content-Type[0]",
 			"DummyContent-Type": ["requestHeaders.Content-Type[0]","DummyContentTypeValue"],
 			"Checksum": "fdjfnfffewfwef"
-
 		},
 		
-"responseJsonBody": {
+		"responseJsonBody": {
 			"actionDone": "requestJsonBody.action",
 			"statusCode": "$statusCode",
 			"statusMsg": "Debit Success",
@@ -87,6 +84,7 @@ func readApiConfigFromDB() string  {
 			"amountDetails":{
 				"amountDebited":"requestJsonBody.txnDetails.amount"
 			},
+			"requestTxnDetails":"requestJsonBody.txnDetails",
 			"balanceData": {
 				"mainBalance": 1023,
 				"buckets": {

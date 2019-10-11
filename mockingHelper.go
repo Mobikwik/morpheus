@@ -114,31 +114,32 @@ func setResponseHeaderMap(responseHeaderConfigJsonMap map[string]interface{}, re
 	return responseHeaderValuesJsonMap
 }
 
-func getResponseHeaderConfigValueFromRequestHeader(responseConfigKeyValue string, requestHeaderMap map[string][]string) []string {
-	log.Printf("inside getResponseHeaderConfigValueFromRequestHeader, getting value for response config %s",responseConfigKeyValue)
-	if strings.HasPrefix(responseConfigKeyValue, "requestHeaders.") {
-		strValueSplit := strings.Split(responseConfigKeyValue, ".")
+func getResponseHeaderConfigValueFromRequestHeader(responseHeaderConfigValue string, requestHeaderMap map[string][]string) []string {
+	log.Printf("inside getResponseHeaderConfigValueFromRequestHeader, getting value for response config %s", responseHeaderConfigValue)
+	if strings.HasPrefix(responseHeaderConfigValue, "requestHeaders.") {
+		responseHeaderConfigValueSplit := strings.Split(responseHeaderConfigValue, ".")
 
-		if len(strValueSplit) < 2 {
+		if len(responseHeaderConfigValueSplit) < 2 {
 			// throw error
 			log.Print("invalid response header configuration")
+			return nil
 		}
 		/* golang converts request headers to canonical form, so we need to do the same while fetching header values
 		https://godoc.org/net/http#CanonicalHeaderKey*/
-		canonicalHeaderName := http.CanonicalHeaderKey(strValueSplit[1])
+		canonicalHeaderName := http.CanonicalHeaderKey(responseHeaderConfigValueSplit[1])
 		/* if config is like $requestHeaders.Content-Type[2], get the array index part,i.e. 2
-		strValueSplit[1] = Content-Type[2], len(strValueSplit[1]) =15,so:
+		responseHeaderConfigValueSplit[1] = Content-Type[2], len(responseHeaderConfigValueSplit[1]) =15,so:
 		openingBracketIndex(index of [) = 12 = 15-3
 		closingBracketIndex(index of ]) = 14 = 15-1
 		arrIndex will have value 2
 		*/
-		openingBracketIndex := strings.Index(strValueSplit[1], "[")
-		closingBracketIndex := strings.Index(strValueSplit[1], "]")
+		openingBracketIndex := strings.Index(responseHeaderConfigValueSplit[1], "[")
+		closingBracketIndex := strings.Index(responseHeaderConfigValueSplit[1], "]")
 
-		if openingBracketIndex == len(strValueSplit[1])-3 && closingBracketIndex == len(strValueSplit[1])-1 {
+		if openingBracketIndex == len(responseHeaderConfigValueSplit[1])-3 && closingBracketIndex == len(responseHeaderConfigValueSplit[1])-1 {
 			// remove [2] part from Content-Type[2], set canonicalHeaderName to Content-Type
 			canonicalHeaderName=canonicalHeaderName[0:openingBracketIndex]
-			arrIndex := strValueSplit[1][openingBracketIndex+1:closingBracketIndex]
+			arrIndex := responseHeaderConfigValueSplit[1][openingBracketIndex+1:closingBracketIndex]
 			arrIndexInt, err := strconv.Atoi(arrIndex) // convert string to int
 			if err!=nil {
 				log.Print("error parsing string to int ",err)
@@ -151,130 +152,143 @@ func getResponseHeaderConfigValueFromRequestHeader(responseConfigKeyValue string
 		}
 	} else {
 		// return the value inside config as it is
-		return []string{responseConfigKeyValue}
+		return []string{responseHeaderConfigValue}
 	}
 	return []string{}
 }
 
 
 func setResponseBodyMap(responseBodyConfigJsonMap map[string]interface{}, requestBodyJsonMap map[string]interface{}) {
-	for key, responseBodyKeyValueGenericType := range responseBodyConfigJsonMap {
-		log.Printf("getting value for key %s response body config value %s of type %T",key,responseBodyKeyValueGenericType,
-			responseBodyKeyValueGenericType)
+
+	for key, responseBodyConfigValueGenericType := range responseBodyConfigJsonMap {
+		log.Printf("getting value for key %s response body config value %s of type %T",key, responseBodyConfigValueGenericType,
+			responseBodyConfigValueGenericType)
 
 		var responseBodyValueArr []interface{}
 
-		switch responseBodyConfigKeyValue := responseBodyKeyValueGenericType.(type) {
+		switch responseBodyConfigValue := responseBodyConfigValueGenericType.(type) {
 
 		case []string:
-			for i, responseConfigKeyValueSingle := range responseBodyConfigKeyValue {
-				responseBodyValueArr = append(responseBodyValueArr,getResponseBodyConfigValueFromRequestBody(responseConfigKeyValueSingle, requestBodyJsonMap))
+			for i, responseConfigValueSingle := range responseBodyConfigValue {
+				responseBodyValueArr = append(responseBodyValueArr, getResponseBodyValueFromRequestBody(responseConfigValueSingle,
+					requestBodyJsonMap))
 				log.Printf("adding array value %s on index %d for header %s ", responseBodyValueArr[i],i,key)
 			}
 			responseBodyConfigJsonMap[key]=responseBodyValueArr
 		case []interface {}:
 
-			for i, responseBodyConfigKeyValueSingle := range responseBodyConfigKeyValue {
+			for i, responseBodyConfigKeyValueSingle := range responseBodyConfigValue {
 
 				log.Printf("getting value for config %s",responseBodyConfigKeyValueSingle)
 				responseBodyConfigKeyValueSingleStr, ok := responseBodyConfigKeyValueSingle.(string)
 				if ok {
-					responseBodyValueArr = append(responseBodyValueArr,getResponseBodyConfigValueFromRequestBody(responseBodyConfigKeyValueSingleStr, requestBodyJsonMap))
+					responseBodyValueArr = append(responseBodyValueArr, getResponseBodyValueFromRequestBody(responseBodyConfigKeyValueSingleStr, requestBodyJsonMap))
 					log.Printf("adding array value %v on index %d for header %s ", responseBodyValueArr[i],i,key)
 				}
 
 			}
 			responseBodyConfigJsonMap[key]=responseBodyValueArr
 		case string:
-			responseBodyConfigJsonMap[key] = getResponseBodyConfigValueFromRequestBody(responseBodyConfigKeyValue, requestBodyJsonMap)
+			responseBodyConfigJsonMap[key] = getResponseBodyValueFromRequestBody(responseBodyConfigValue, requestBodyJsonMap)
 
 			// when the value is a nested json, do recursive call
 		case map[string]interface{}:
-			setResponseBodyMap(responseBodyConfigKeyValue, requestBodyJsonMap)
+			setResponseBodyMap(responseBodyConfigValue, requestBodyJsonMap)
 		default:
-			fmt.Printf("type is %T responseKeyValueGenericType %s \n", responseBodyConfigKeyValue, responseBodyKeyValueGenericType)
+			fmt.Printf("type is %T responseKeyValueGenericType %s \n", responseBodyConfigValue, responseBodyConfigValueGenericType)
 		}
 	}
 }
 
-func getResponseBodyConfigValueFromRequestBody(responseBodyConfigKeyValue string, requestBodyJsonMap map[string]interface{}) interface{} {
-	log.Printf("inside getResponseBodyConfigValueFromRequestBody, getting value for response config %s",responseBodyConfigKeyValue)
-	if strings.HasPrefix(responseBodyConfigKeyValue, "requestJsonBody.") {
+func getResponseBodyValueFromRequestBody(responseBodyConfigValue string, requestBodyJsonMap map[string]interface{}) interface{} {
+	log.Printf("inside getResponseBodyValueFromRequestBody, getting value for response config %s", responseBodyConfigValue)
+	if strings.HasPrefix(responseBodyConfigValue, "requestJsonBody.") {
 
-		strValueSplit := strings.Split(responseBodyConfigKeyValue, ".")
+		responseBodyConfigValueSplit := strings.Split(responseBodyConfigValue, ".")
 
-		if len(strValueSplit) < 2 {
-			// throw error
-			log.Print("invalid response body configuration")
+		// return nil for invalid config value "requestJsonBody."
+		if len(responseBodyConfigValueSplit) < 2 {
+			//TODO throw error
+			log.Print("invalid response body configuration ", responseBodyConfigValue)
+			return nil
 		}
 
-
-		var mapInterfaceTypeValue map[string]interface{} // temp variable to hold map type value
+		// temp variables to hold values fetched from requestBodyJsonMap.
+		// Declaring here because these can't be declared inside below for loop as they need to hold values of previous iteration
+		var requestBodyValueMapOfInterfaceType map[string]interface{}
+		var requestBodyValueInterfaceType interface{}
 		ok1 := false
-		ok2:=false
-		/*
-			get the value of first nesting level object reference
+
+		/*	get the value of first nesting level object reference
 			for ex: if config is requestJsonBody.orderDetails.addressDetails.pincode, get value of requestJsonBody["orderDetails"]
-			and store in interfaceTypeValue
+			and store in requestBodyValueInterfaceType
+		   Value can be of any type (string,number or another nested object, so storing in interface{} type)
 		*/
-		interfaceTypeValue := requestBodyJsonMap[strValueSplit[1]]
-		/* process all the nested object references from 2nd level onwards by looping around the array split with ".",
-		   i.e. iteration i=1: get value of requestJsonBody.[orderDetails].[addressDetails] from interfaceTypeValue and store in interfaceTypeValue
-				iteration i=2: get value of requestJsonBody.[orderDetails].[addressDetails].pincode from interfaceTypeValue and store in interfaceTypeValue
-		*/
-		for i := 1; i < len(strValueSplit); i++ {
+		requestBodyValueInterfaceType = requestBodyJsonMap[responseBodyConfigValueSplit[1]]
 
-			/* mapTypeValue is typecast of interfaceTypeValue from interface{} type to map[string]interface{}
+		/* process all the nested object references from 2nd level onwards by looping around the array split with seperator ".",
+		   i.e. iteration i=1: get value of requestJsonBody.[orderDetails].[addressDetails] from requestBodyValueInterfaceType and store in requestBodyValueInterfaceType
+				iteration i=2: get value of requestJsonBody.[orderDetails].[addressDetails].pincode from requestBodyValueInterfaceType and store in requestBodyValueInterfaceType
+		*/
+		for i := 1; i < len(responseBodyConfigValueSplit); i++ {
+
+			/* requestBodyValueMapOfInterfaceType is typecast of requestBodyValueInterfaceType from interface{} type to map[string]interface{}
 			 i.e. value of requestJsonBody.[orderDetails].[addressDetails] is a nested json, so storing this value in
-			mapTypeValue to extract further values (like requestJsonBody.[orderDetails].[addressDetails].pincode) from it in next iteration
+			requestBodyValueMapOfInterfaceType to extract further values (like requestJsonBody.[orderDetails].[addressDetails].pincode) from it in next iteration
 			*/
-			mapInterfaceTypeValue, ok1 = interfaceTypeValue.(map[string]interface{})
+			// Don't use ":=" for value assignment as it will redeclare requestBodyValueMapOfInterfaceType as a new local variable in each iteration
+			requestBodyValueMapOfInterfaceType, ok1 = requestBodyValueInterfaceType.(map[string]interface{})
 
+			// checking if we have more nested config values at (i+1)th level
+			if ok1 && i+1 < len(responseBodyConfigValueSplit) {
 
-			if ok1 && i+1 < len(strValueSplit) {
-			//	interfaceTypeValue = mapInterfaceTypeValue[strValueSplit[i+1]]
-			//} else if ok2 {
+				jsonKeyName:= responseBodyConfigValueSplit[i+1]
 
-
-				canonicalHeaderName:=strValueSplit[i+1]
-
-				openingBracketIndex := strings.Index(canonicalHeaderName, "[")
-				closingBracketIndex := strings.Index(canonicalHeaderName, "]")
-
-				if openingBracketIndex == len(canonicalHeaderName)-3 && closingBracketIndex == len(canonicalHeaderName)-1 {
-					// remove [2] part from Content-Type[2], set canonicalHeaderName to Content-Type
-					canonicalHeaderName=canonicalHeaderName[0:openingBracketIndex]
-					arrIndex := strValueSplit[i+1][openingBracketIndex+1:closingBracketIndex]
-					arrIndexInt, err := strconv.Atoi(arrIndex) // convert string to int
-					if err!=nil {
-						log.Print("error parsing string to int ",err)
-						return []string{}
-					}
-					var mapInterfaceArrayTypeValue []interface{}
-					mapInterfaceArrayTypeValue, ok2 = (mapInterfaceTypeValue[canonicalHeaderName]).([]interface{})
-					if ok2{
-						interfaceTypeValue=mapInterfaceArrayTypeValue[arrIndexInt]
-					}
-				} else {
-					// if the config is like $requestHeaders.Content-Type,return entire array of this header value
-					interfaceTypeValue= mapInterfaceTypeValue[canonicalHeaderName]
-				}
-
-
-			} else {
-				/* reached end of nested values i.e. requestJsonBody.[orderDetails].[addressDetails].pincode,
-				so set the final value in response body map
+				/* if config is like $requestJsonBody.txnTypes[2], get the array index part,i.e. 2
+				responseBodyConfigValueSplit[1] = txnTypes[2], len(responseBodyConfigValueSplit[1]) =11,so:
+				openingBracketIndex(index of [) = 8 = 11-3
+				closingBracketIndex(index of ]) = 10 = 11-1
+				arrIndex will have value 2
 				*/
+				openingBracketIndex := strings.Index(jsonKeyName, "[")
+				closingBracketIndex := strings.Index(jsonKeyName, "]")
 
-				/*s,ok:=interfaceTypeValue.(string)
-				if ok{
-					return s
-				}*/
-				return interfaceTypeValue
+				if openingBracketIndex == len(jsonKeyName)-3 && closingBracketIndex == len(jsonKeyName)-1 {
+					// get substring "2" from txnTypes[2]
+					arrIndex := jsonKeyName[openingBracketIndex+1:closingBracketIndex]
+					// get substring "txnTypes" from txnTypes[2] and set in jsonKeyName
+					jsonKeyName=jsonKeyName[0:openingBracketIndex]
+
+					arrIndexInt, err := strconv.Atoi(arrIndex) // convert string "2" to int
+					if err!=nil {
+						log.Printf("error parsing string to int for invalid config %s %v",responseBodyConfigValue,err)
+						return nil // invalid config
+					}
+					var interfaceArrayTypeValue []interface{}
+					ok2:=false
+					/* As we are using config like txnTypes[2], value of txnTypes must be an array,
+					so typecast to []interface{} */
+					interfaceArrayTypeValue, ok2 = (requestBodyValueMapOfInterfaceType[jsonKeyName]).([]interface{})
+					if ok2 {
+						requestBodyValueInterfaceType = interfaceArrayTypeValue[arrIndexInt]
+					} else {
+						//throw error
+						log.Printf("invalid config %s, trying to typecast non-array to array",responseBodyConfigValue)
+						return nil
+					}
+				} else if openingBracketIndex == -1 && closingBracketIndex == -1 {
+					// set value for next iteration if the config is like $requestHeaders.Content-Type i.e. does not have "[" and "]"
+					requestBodyValueInterfaceType = requestBodyValueMapOfInterfaceType[jsonKeyName]
+				}
+			} else {
+				/* reached end of nested values i.e. requestJsonBody.[orderDetails].[addressDetails].pincode, no more iterations possible,
+				so return the final value from request body */
+				return requestBodyValueInterfaceType
 			}
 		}
 	} else {
-		return responseBodyConfigKeyValue
+		// response config does not start with "requestJsonBody.", so it's hard-coded value, so return that value as it is
+		return responseBodyConfigValue
 	}
 	return nil
 }
