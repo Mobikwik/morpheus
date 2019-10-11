@@ -19,32 +19,39 @@ func setResponseBodyMap(responseBodyConfigJsonMap map[string]interface{}, reques
 
 		case []string:
 			for i, responseConfigValueSingle := range responseBodyConfigValue {
-				responseBodyValueArr = append(responseBodyValueArr, getResponseBodyValueFromRequestBody(responseConfigValueSingle,
-					requestBodyJsonMap))
+				responseBodyValueArr = append(responseBodyValueArr,
+					getResponseBodyValueFromRequestBody(responseConfigValueSingle, requestBodyJsonMap))
 				log.Printf("adding array value %v on index %d for header %s ", responseBodyValueArr[i],i,key)
 			}
 			responseBodyConfigJsonMap[key]=responseBodyValueArr
 		case []interface {}:
-			for i, responseBodyConfigKeyValueSingle := range responseBodyConfigValue {
-				log.Printf("getting value for config %s",responseBodyConfigKeyValueSingle)
-				responseBodyConfigValueSingleStr, ok := responseBodyConfigKeyValueSingle.(string)
-				if ok {
-					responseBodyValueArr = append(responseBodyValueArr, getResponseBodyValueFromRequestBody(responseBodyConfigValueSingleStr, requestBodyJsonMap))
-					log.Printf("adding array value %v on index %d for header %s ", responseBodyValueArr[i],i,key)
-				}
-			}
-			responseBodyConfigJsonMap[key]=responseBodyValueArr
+			responseBodyConfigJsonMap[key] = processResponseConfigArrayType(responseBodyConfigValue,
+			requestBodyJsonMap)
 		case string:
 			responseBodyConfigJsonMap[key] = getResponseBodyValueFromRequestBody(responseBodyConfigValue, requestBodyJsonMap)
 
-			// when the value is a nested json, do recursive call
 		case map[string]interface{}:
+			// when the value is map type(nested json object), do recursive call
 			setResponseBodyMap(responseBodyConfigValue, requestBodyJsonMap)
 		default:
-			fmt.Printf("no processing needed for response body config %v type %T",responseBodyConfigValueGenericType,
+			fmt.Printf("no processing needed for response body config %v type %T", responseBodyConfigValueGenericType,
 				responseBodyConfigValueGenericType)
 		}
 	}
+}
+
+func processResponseConfigArrayType(responseBodyConfigValue []interface{}, requestBodyJsonMap map[string]interface{}) []interface{} {
+	var responseBodyValueArr []interface{}
+	for i, responseBodyConfigKeyValueSingle := range responseBodyConfigValue {
+		log.Printf("getting value for config %s", responseBodyConfigKeyValueSingle)
+		responseBodyConfigValueSingleStr, ok := responseBodyConfigKeyValueSingle.(string)
+		if ok {
+			responseBodyValueArr = append(responseBodyValueArr,
+				getResponseBodyValueFromRequestBody(responseBodyConfigValueSingleStr, requestBodyJsonMap))
+			log.Printf("adding array value %v on index %d for response body config %s", responseBodyValueArr[i], i,responseBodyConfigValueSingleStr)
+		}
+	}
+	return responseBodyValueArr
 }
 
 func getResponseBodyValueFromRequestBody(responseBodyConfigValue string, requestBodyJsonMap map[string]interface{}) interface{} {
