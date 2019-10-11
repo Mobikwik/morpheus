@@ -37,7 +37,7 @@ type ApiConfig struct {
 
 func readApiConfigFromDB() string  {
 
-	apiConfigJson:=`[
+	testApiConfigJson :=`[
 {
 	"id":"1",	
 	"url": "/api/p/wallet/debit",
@@ -99,7 +99,7 @@ func readApiConfigFromDB() string  {
 }
 	]`
 
-	return apiConfigJson
+	return testApiConfigJson
 
 }
 
@@ -127,7 +127,6 @@ func parseApiConfig(apiConfigJson string) []ApiConfig {
 	log.Print("apiConfig values: ", apiConfig)
 
 	return apiConfig
-
 }
 
 func apiConfigWebGetHandler(w http.ResponseWriter, r *http.Request) {
@@ -144,7 +143,3 @@ func apiConfigWebGetHandler(w http.ResponseWriter, r *http.Request) {
 
 	log.Print("exiting apiConfigWebGetHandler")
 }
-
-/*func main() {
-	parseVariableConfig()
-}*/

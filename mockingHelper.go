@@ -22,7 +22,6 @@ func doMocking(url, requestMethod string, requestBody []byte,
 
 	log.Printf("entering doMocking with url %s method %s body %s",url,requestMethod, requestBody)
 
-
 	if requestHeader[ContentTypeHeaderName]!=nil &&
 		strings.Contains(requestHeader[ContentTypeHeaderName][0],ContentTypeHeaderValueJson) {
 		var requestBodyJson map[string]interface{}
@@ -30,14 +29,15 @@ func doMocking(url, requestMethod string, requestBody []byte,
 		if err != nil {
 			panic(err)
 		}
-		log.Println(requestBodyJson)
+		log.Println("parsed request body json is ",requestBodyJson)
 
 		matchingApiConfig := findMatchingApiConfig(url,requestMethod)
-		log.Print(matchingApiConfig)
-
 		if matchingApiConfig == nil {
 			// return nil values or throw error
+			log.Printf("no matching config found for this api request")
+			responseBody="no matching config found for this api request"
 		} else {
+			log.Print("found matching api config ",matchingApiConfig)
 			return getMockedResponse(matchingApiConfig,requestBodyJson,requestHeader)
 		}
 	} else{

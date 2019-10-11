@@ -8,32 +8,28 @@ import (
 	"strings"
 )
 
-
 func mockingRequestHandler(w http.ResponseWriter, r *http.Request) {
 
 	log.Print("inside mockingRequestHandler")
 
-	var msg = "Welcome to Morpheus! Please use complete api url for mocking instead of "
 	var url = r.URL.Path
 
 	if strings.EqualFold(url,"/") {
 		log.Print("no url provided for mocking")
-		fmt.Fprintf(w,msg+url)
+		fmt.Fprintf(w,"%s", "Welcome to Morpheus, an api mocking framework by Mobikwik." +
+			"Please use complete api url for mocking instead of /." +
+			"For example: \"http://localhost:8080/api/p/wallet/debit\"")
 		return
 	} else {
 		var body =r.Body
 		var bodyBytes []byte
 		if body != nil {
-			bodyBytesTmp, err := ioutil.ReadAll(body)
+			var err error
+			bodyBytes, err = ioutil.ReadAll(body)
 			if err != nil {
 				panic(err)
 			}
-			bodyBytes=bodyBytesTmp
 		}
-
-		// Restore the io.ReadCloser to its original state
-		//body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))// Use the content
-		//var bodyString = string(bodyBytes)
 
 		log.Printf("api to mock is %s request method is %s",url,r.Method)
 
@@ -47,12 +43,5 @@ func mockingRequestHandler(w http.ResponseWriter, r *http.Request) {
 		// send final api response
 		fmt.Fprintf(w,"%v",responseBody)
 	}
-
 	log.Print("exiting mockingRequestHandler")
-
-
 }
-
-/*func main() {
-	parseVariableConfig()
-}*/

@@ -16,7 +16,7 @@ type VariableConfig struct {
 
 func readVariableJsonFromDB() string {
 
-	variableConfigJson:=`[
+	testVariableConfigJson :=`[
 
 {
 	"id":"1",
@@ -26,7 +26,6 @@ func readVariableJsonFromDB() string {
 	"maxLength": 20,
 	"regex": "[a-zA-Z0-9]{20}"
 }
-
 ,
 {
 	"id":"2",
@@ -53,7 +52,7 @@ func readVariableJsonFromDB() string {
 }
 	]`
 
-return variableConfigJson
+return testVariableConfigJson
 }
 
 func parseVariableConfig(variableConfigJson string) []VariableConfig {
