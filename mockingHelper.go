@@ -15,9 +15,9 @@ const (
 )
 
 func doMocking(url, requestMethod string, requestBody []byte,
-		requestHeader map[string][]string) (string,string,map[string][]string) {
+		requestHeader map[string][]string) (string,map[string][]string) {
 
-	var responseBody, responseContentType string
+	var responseBody string
 	var responseHeaders map[string][]string
 
 	log.Printf("entering doMocking with url %s method %s body %s",url,requestMethod, requestBody)
@@ -43,13 +43,13 @@ func doMocking(url, requestMethod string, requestBody []byte,
 	} else{
 		log.Print("invalid Content-Type header")
 	}
-	return responseBody,responseContentType,responseHeaders
+	return responseBody,responseHeaders
 }
 
 func getMockedResponse(apiConfig *ApiConfig, requestBodyJsonMap map[string]interface{},
-		requestHeaderMap map[string][]string) (string, string, map[string][]string) {
+		requestHeaderMap map[string][]string) (string, map[string][]string) {
 
-	var responseBody, responseContentType string
+	var responseBody string
 	var responseHeaders map[string][]string
 
 	responseBodyConfigJsonMap := apiConfig.ResponseConfig.ResponseJsonBody
@@ -66,7 +66,7 @@ func getMockedResponse(apiConfig *ApiConfig, requestBodyJsonMap map[string]inter
 		responseBody = string(responseBodyBytes)
 	}
 
-	return responseBody, responseContentType, responseHeaders
+	return responseBody, responseHeaders
 
 }
 
@@ -161,7 +161,7 @@ func getResponseHeaderConfigValueFromRequestHeader(responseHeaderConfigValue str
 func setResponseBodyMap(responseBodyConfigJsonMap map[string]interface{}, requestBodyJsonMap map[string]interface{}) {
 
 	for key, responseBodyConfigValueGenericType := range responseBodyConfigJsonMap {
-		log.Printf("getting value for key %s response body config value %s of type %T",key, responseBodyConfigValueGenericType,
+		log.Printf("getting value for key %s response body config value %v of type %T",key, responseBodyConfigValueGenericType,
 			responseBodyConfigValueGenericType)
 
 		var responseBodyValueArr []interface{}
@@ -172,20 +172,17 @@ func setResponseBodyMap(responseBodyConfigJsonMap map[string]interface{}, reques
 			for i, responseConfigValueSingle := range responseBodyConfigValue {
 				responseBodyValueArr = append(responseBodyValueArr, getResponseBodyValueFromRequestBody(responseConfigValueSingle,
 					requestBodyJsonMap))
-				log.Printf("adding array value %s on index %d for header %s ", responseBodyValueArr[i],i,key)
+				log.Printf("adding array value %v on index %d for header %s ", responseBodyValueArr[i],i,key)
 			}
 			responseBodyConfigJsonMap[key]=responseBodyValueArr
 		case []interface {}:
-
 			for i, responseBodyConfigKeyValueSingle := range responseBodyConfigValue {
-
 				log.Printf("getting value for config %s",responseBodyConfigKeyValueSingle)
-				responseBodyConfigKeyValueSingleStr, ok := responseBodyConfigKeyValueSingle.(string)
+				responseBodyConfigValueSingleStr, ok := responseBodyConfigKeyValueSingle.(string)
 				if ok {
-					responseBodyValueArr = append(responseBodyValueArr, getResponseBodyValueFromRequestBody(responseBodyConfigKeyValueSingleStr, requestBodyJsonMap))
+					responseBodyValueArr = append(responseBodyValueArr, getResponseBodyValueFromRequestBody(responseBodyConfigValueSingleStr, requestBodyJsonMap))
 					log.Printf("adding array value %v on index %d for header %s ", responseBodyValueArr[i],i,key)
 				}
-
 			}
 			responseBodyConfigJsonMap[key]=responseBodyValueArr
 		case string:
@@ -195,7 +192,8 @@ func setResponseBodyMap(responseBodyConfigJsonMap map[string]interface{}, reques
 		case map[string]interface{}:
 			setResponseBodyMap(responseBodyConfigValue, requestBodyJsonMap)
 		default:
-			fmt.Printf("type is %T responseKeyValueGenericType %s \n", responseBodyConfigValue, responseBodyConfigValueGenericType)
+			fmt.Printf("no processing needed for response body config %v type %T",responseBodyConfigValueGenericType,
+				responseBodyConfigValueGenericType)
 		}
 	}
 }

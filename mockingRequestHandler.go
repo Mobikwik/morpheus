@@ -37,15 +37,14 @@ func mockingRequestHandler(w http.ResponseWriter, r *http.Request) {
 
 		log.Printf("api to mock is %s request method is %s",url,r.Method)
 
+		var responseBody, responseHeaders = doMocking(url,r.Method,bodyBytes,r.Header)
 
-		var responseBody, responseContentType, responseHeaders = doMocking(url,r.Method,bodyBytes,r.Header)
-
-		log.Println("mocked response is ",responseBody,responseContentType,responseHeaders)
+		log.Printf("final mocked response \n body: %s \n headers: %s",responseBody,responseHeaders)
 
 		for headerName,headerValue:= range responseHeaders {
 			w.Header()[headerName]=headerValue
 		}
-		// print final api response
+		// send final api response
 		fmt.Fprintf(w,"%v",responseBody)
 	}
 

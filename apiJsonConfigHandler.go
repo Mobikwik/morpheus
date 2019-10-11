@@ -66,6 +66,7 @@ func readApiConfigFromDB() string  {
 		"responseHeaders": {
 			"X-DeviceId": "requestHeaders.X-DeviceId",
 			"X-ClientId": "requestHeaders.X-ClientId",
+			"Content-Type": "requestHeaders.Content-Type[0]",
 			"AllContent-Types": "requestHeaders.Content-Type",
 			"ConsideredContent-Types": ["requestHeaders.Content-Type[0]","requestHeaders.Content-Type[1]"],
 			"SelectedContent-Type": "requestHeaders.Content-Type[0]",
