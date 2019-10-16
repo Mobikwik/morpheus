@@ -11,9 +11,19 @@ const (
 	ContentTypeHeaderName      = "Content-Type"
 	ContentTypeHeaderValueJson = "application/json"
 )
-
+/*
+func recoverConfigError2() string {
+	if r := recover(); r!= nil {
+		log.Print("recovered from ", r)
+	}
+	return "recover return"
+}
+*/
 func doMocking(url, requestMethod string, requestBody []byte,
 		requestHeader map[string][]string) (string,map[string][]string) {
+
+/*	// this function will be called in case of any "panic"
+	defer recoverConfigError2()*/
 
 	var responseBody string
 	var responseHeaders map[string][]string

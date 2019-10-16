@@ -38,6 +38,7 @@ func TestResponseHeaderConfig_ForNestedEntireArrayFromRequestHeader(t *testing.T
 	runResponseHeaderConfigTest(responseHeaderConfigValue, expected,t)
 }
 
+// test pending for array type header config
 /*
 func TestResponseHeaderConfig_ForNestedMultipleArrayValueFromRequestHeader(t *testing.T)  {
 	responseHeaderConfigValue:= []interface{} {

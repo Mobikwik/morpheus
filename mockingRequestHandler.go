@@ -5,10 +5,22 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"runtime/debug"
 	"strings"
 )
 
+func recoverConfigError1(w http.ResponseWriter) {
+	if r := recover(); r!= nil {
+		log.Print("panic occurred ", r)
+		debug.PrintStack()
+		fmt.Fprintf(w,"%v",r)
+	}
+}
+
 func mockingRequestHandler(w http.ResponseWriter, r *http.Request) {
+
+	// this function will be called in case of any "panic"
+	defer recoverConfigError1(w)
 
 	log.Print("inside mockingRequestHandler")
 

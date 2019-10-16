@@ -80,9 +80,16 @@ func getResponseHeaderConfigValueFromRequestHeader(responseHeaderConfigValue str
 			arrIndexInt, err := strconv.Atoi(arrIndex) // convert string to int
 			if err!=nil {
 				log.Print("error parsing string to int ",err)
-				return []string{}
+				panic(err)
 			}
 			return []string{requestHeaderMap[canonicalHeaderName][arrIndexInt]}
+			/*if arrIndexInt<len(requestHeaderMap[canonicalHeaderName]) {
+				return []string{requestHeaderMap[canonicalHeaderName][arrIndexInt]}
+			} else {
+				log.Printf("invalid response header config %s",responseHeaderConfigValue)
+				panic("invalid response header config "+responseHeaderConfigValue)
+			}*/
+
 		} else {
 			// if the config is like $requestHeaders.Content-Type,return entire array of this header value
 			return requestHeaderMap[canonicalHeaderName]
