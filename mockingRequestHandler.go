@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func recoverConfigError1(w http.ResponseWriter) {
+func recoverConfigError(w http.ResponseWriter) {
 	if r := recover(); r!= nil {
 		log.Print("panic occurred ", r)
 		debug.PrintStack()
@@ -20,7 +20,7 @@ func recoverConfigError1(w http.ResponseWriter) {
 func mockingRequestHandler(w http.ResponseWriter, r *http.Request) {
 
 	// this function will be called in case of any "panic"
-	defer recoverConfigError1(w)
+	defer recoverConfigError(w)
 
 	log.Print("inside mockingRequestHandler")
 

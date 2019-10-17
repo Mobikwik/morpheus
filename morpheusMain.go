@@ -1,12 +1,12 @@
 package main
 
 import (
-	"log"
 	"github.com/gorilla/mux"
+	"log"
 	"net/http"
 )
 
-func newRouter() *mux.Router  {
+func newRouter() *mux.Router {
 
 	log.Print("entering newRouter method")
 
@@ -17,7 +17,7 @@ func newRouter() *mux.Router  {
 	r.HandleFunc("/apiConfig", apiConfigWebGetHandler).Methods("GET")
 
 	// Handler for mocking
-	r.PathPrefix("/").HandlerFunc(mockingRequestHandler).Methods("GET","POST")
+	r.PathPrefix("/").HandlerFunc(mockingRequestHandler).Methods("GET", "POST")
 
 	staticFileDirectory := http.Dir("./assets/")
 
@@ -33,6 +33,6 @@ func newRouter() *mux.Router  {
 func main() {
 	log.Print("entering mocking main")
 	r := newRouter()
-	http.ListenAndServe(":8080",r)
+	http.ListenAndServe(":8080", r)
 	log.Print("exiting mocking main")
 }
