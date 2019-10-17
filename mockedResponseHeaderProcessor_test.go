@@ -4,38 +4,35 @@ import (
 	"testing"
 )
 
+func TestResponseHeaderConfig_ForSimpleValueFromRequestHeader(t *testing.T) {
+	responseHeaderConfigValue := "simpleValue"
+	expected := []string{"simpleValue"}
 
-func TestResponseHeaderConfig_ForSimpleValueFromRequestHeader(t *testing.T)  {
-	responseHeaderConfigValue:="simpleValue"
-	expected :=[]string{"simpleValue"}
-
-	runResponseHeaderConfigTest(responseHeaderConfigValue, expected,t)
+	runResponseHeaderConfigTest(responseHeaderConfigValue, expected, t)
 }
 
-func TestResponseHeaderConfig_ForNestedValueFromRequestHeader(t *testing.T)  {
+func TestResponseHeaderConfig_ForNestedValueFromRequestHeader(t *testing.T) {
 
-	responseHeaderConfigValue:="requestHeaders.X-DeviceId"
-	expected:=[]string{"Device1234"}
+	responseHeaderConfigValue := "requestHeaders.X-DeviceId"
+	expected := []string{"Device1234"}
 
-	runResponseHeaderConfigTest(responseHeaderConfigValue, expected,t)
+	runResponseHeaderConfigTest(responseHeaderConfigValue, expected, t)
 }
 
+func TestResponseHeaderConfig_ForNestedSingleArrayValueFromRequestHeader(t *testing.T) {
 
-func TestResponseHeaderConfig_ForNestedSingleArrayValueFromRequestHeader(t *testing.T)  {
+	responseHeaderConfigValue := "requestHeaders.Content-Type[2]"
+	expected := []string{"application/pdf"}
 
-	responseHeaderConfigValue:="requestHeaders.Content-Type[2]"
-	expected :=[]string{"application/pdf"}
-
-	runResponseHeaderConfigTest(responseHeaderConfigValue, expected,t)
+	runResponseHeaderConfigTest(responseHeaderConfigValue, expected, t)
 }
 
+func TestResponseHeaderConfig_ForNestedEntireArrayFromRequestHeader(t *testing.T) {
 
-func TestResponseHeaderConfig_ForNestedEntireArrayFromRequestHeader(t *testing.T)  {
+	responseHeaderConfigValue := "requestHeaders.Content-Type"
+	expected := []string{"application/json", "text/html", "application/pdf"}
 
-	responseHeaderConfigValue:="requestHeaders.Content-Type"
-	expected := []string {"application/json","text/html","application/pdf"}
-
-	runResponseHeaderConfigTest(responseHeaderConfigValue, expected,t)
+	runResponseHeaderConfigTest(responseHeaderConfigValue, expected, t)
 }
 
 // test pending for array type header config
@@ -77,14 +74,14 @@ func runResponseHeaderArrayTypeConfigTest(responseHeaderConfigValue []interface{
 
 func runResponseHeaderConfigTest(responseHeaderConfigValue string, expected interface{},
 	t *testing.T) {
-		
-		// Go converts all header keys to Canonical form, hence keeping header names in canonical form here 
-	requestHeaderJsonMap := map[string][]string {
+
+	// Go converts all header keys to Canonical form, hence keeping header names in canonical form here
+	requestHeaderJsonMap := map[string][]string{
 		"Authorization": []string{"hfdhfbwfbg"},
-		"Content-Type": []string{"application/json","text/html","application/pdf"},
-		"X-Deviceid": []string{"Device1234"},
-		"X-Clientid": []string{"3"},
-		"X-Checksum": []string{"hfsdhfbudgwq8gdqwudqu"},
+		"Content-Type":  []string{"application/json", "text/html", "application/pdf"},
+		"X-Deviceid":    []string{"Device1234"},
+		"X-Clientid":    []string{"3"},
+		"X-Checksum":    []string{"hfsdhfbudgwq8gdqwudqu"},
 	}
 
 	actual := getResponseHeaderConfigValueFromRequestHeader(responseHeaderConfigValue, requestHeaderJsonMap)

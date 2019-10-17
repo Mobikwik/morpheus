@@ -8,8 +8,7 @@ import (
 	"strings"
 )
 
-type Request struct{
-
+type Request struct {
 	ResponseDelayInSeconds int
 	// Header config values can be of type string or []string.Hence using generic interface{} type
 	RequestHeaders map[string]interface{}
@@ -18,7 +17,6 @@ type Request struct{
 }
 
 type Response struct {
-
 	HttpCode int
 	// Header config values can be of type string or []string.Hence using generic interface{} type
 	ResponseHeaders map[string]interface{}
@@ -27,7 +25,6 @@ type Response struct {
 }
 
 type ApiConfig struct {
-
 	Id             string
 	Url            string
 	Method         string
@@ -35,10 +32,9 @@ type ApiConfig struct {
 	ResponseConfig Response
 }
 
+func readApiConfigFromDB() string {
 
-func readApiConfigFromDB() string  {
-
-	testApiConfigJson :=`[
+	testApiConfigJson := `[
 {
 	"id":"1",	
 	"url": "/api/p/wallet/debit",
@@ -162,7 +158,7 @@ func readApiConfigFromDB() string  {
 	return testApiConfigJson
 }
 
-func getApiConfigArray() []ApiConfig  {
+func getApiConfigArray() []ApiConfig {
 	var apiConfigJson = readApiConfigFromDB()
 	return parseApiConfig(apiConfigJson)
 }
@@ -172,7 +168,7 @@ func parseApiConfig(apiConfigJson string) []ApiConfig {
 	var apiConfig []ApiConfig
 	json.Unmarshal([]byte(apiConfigJson), &apiConfig)
 	for i, v := range apiConfig {
-		log.Print("apiConfig values for i= ",i, v)
+		log.Print("apiConfig values for i= ", i, v)
 	}
 	log.Print("apiConfig values: ", apiConfig)
 	return apiConfig
@@ -182,25 +178,24 @@ func apiConfigWebGetHandler(w http.ResponseWriter, r *http.Request) {
 	log.Print("inside apiConfigWebGetHandler")
 	var apiConfigArr []ApiConfig
 	apiConfigArr = getApiConfigArray()
-	log.Print("parsed json of variables is ",apiConfigArr)
-	fmt.Fprintf(w,"%v",apiConfigArr)
+	log.Print("parsed json of variables is ", apiConfigArr)
+	fmt.Fprintf(w, "%v", apiConfigArr)
 	log.Print("exiting apiConfigWebGetHandler")
 }
-
 
 func findMatchingApiConfig(urlToSearch, requestMethod string) *ApiConfig {
 	//var matchingApiConfig *ApiConfig
 
-	log.Printf("inside findMatchingApiConfig to find matching config for url %s requestMethod %s",urlToSearch,requestMethod)
+	log.Printf("inside findMatchingApiConfig to find matching config for url %s requestMethod %s", urlToSearch, requestMethod)
 
 	var apiConfigArr = getApiConfigArray()
 
-	if apiConfigArr!=nil {
+	if apiConfigArr != nil {
 
-		for _,apiConfig := range apiConfigArr {
+		for _, apiConfig := range apiConfigArr {
 
-			if strings.EqualFold(apiConfig.Url,urlToSearch) && strings.EqualFold(apiConfig.Method,requestMethod) {
-				log.Print("matching api config found with Id ",apiConfig.Id)
+			if strings.EqualFold(apiConfig.Url, urlToSearch) && strings.EqualFold(apiConfig.Method, requestMethod) {
+				log.Print("matching api config found with Id ", apiConfig.Id)
 				return &apiConfig
 			}
 

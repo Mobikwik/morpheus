@@ -10,7 +10,7 @@ import (
 func setResponseBodyMap(responseBodyConfigJsonMap map[string]interface{}, requestBodyJsonMap map[string]interface{}) {
 
 	for key, responseBodyConfigValueGenericType := range responseBodyConfigJsonMap {
-		log.Printf("getting value for key %s response body config value %v of type %T",key, responseBodyConfigValueGenericType,
+		log.Printf("getting value for key %s response body config value %v of type %T", key, responseBodyConfigValueGenericType,
 			responseBodyConfigValueGenericType)
 
 		var responseBodyValueArr []interface{}
@@ -21,12 +21,12 @@ func setResponseBodyMap(responseBodyConfigJsonMap map[string]interface{}, reques
 			for i, responseConfigValueSingle := range responseBodyConfigValue {
 				responseBodyValueArr = append(responseBodyValueArr,
 					getResponseBodyValueFromRequestBody(responseConfigValueSingle, requestBodyJsonMap))
-				log.Printf("adding array value %v on index %d for header %s ", responseBodyValueArr[i],i,key)
+				log.Printf("adding array value %v on index %d for header %s ", responseBodyValueArr[i], i, key)
 			}
-			responseBodyConfigJsonMap[key]=responseBodyValueArr
-		case []interface {}:
+			responseBodyConfigJsonMap[key] = responseBodyValueArr
+		case []interface{}:
 			responseBodyConfigJsonMap[key] = processResponseConfigArrayType(responseBodyConfigValue,
-			requestBodyJsonMap)
+				requestBodyJsonMap)
 		case string:
 			responseBodyConfigJsonMap[key] = getResponseBodyValueFromRequestBody(responseBodyConfigValue, requestBodyJsonMap)
 
@@ -48,7 +48,7 @@ func processResponseConfigArrayType(responseBodyConfigValue []interface{}, reque
 		if ok {
 			responseBodyValueArr = append(responseBodyValueArr,
 				getResponseBodyValueFromRequestBody(responseBodyConfigValueSingleStr, requestBodyJsonMap))
-			log.Printf("adding array value %v on index %d for response body config %s", responseBodyValueArr[i], i,responseBodyConfigValueSingleStr)
+			log.Printf("adding array value %v on index %d for response body config %s", responseBodyValueArr[i], i, responseBodyConfigValueSingleStr)
 		}
 	}
 	return responseBodyValueArr
@@ -96,7 +96,7 @@ func getResponseBodyValueFromRequestBody(responseBodyConfigValue string, request
 			// checking if we have more nested config values at (i+1)th level
 			if ok1 && i+1 < len(responseBodyConfigValueSplit) {
 
-				jsonKeyName:= responseBodyConfigValueSplit[i+1]
+				jsonKeyName := responseBodyConfigValueSplit[i+1]
 
 				/* if config is like $requestJsonBody.txnTypes[2], get the array index part,i.e. 2
 				responseBodyConfigValueSplit[1] = txnTypes[2], len(responseBodyConfigValueSplit[1]) =11,so:
@@ -109,17 +109,17 @@ func getResponseBodyValueFromRequestBody(responseBodyConfigValue string, request
 
 				if openingBracketIndex == len(jsonKeyName)-3 && closingBracketIndex == len(jsonKeyName)-1 {
 					// get substring "2" from txnTypes[2]
-					arrIndex := jsonKeyName[openingBracketIndex+1:closingBracketIndex]
+					arrIndex := jsonKeyName[openingBracketIndex+1 : closingBracketIndex]
 					// get substring "txnTypes" from txnTypes[2] and set in jsonKeyName
-					jsonKeyName=jsonKeyName[0:openingBracketIndex]
+					jsonKeyName = jsonKeyName[0:openingBracketIndex]
 
 					arrIndexInt, err := strconv.Atoi(arrIndex) // convert string "2" to int
-					if err!=nil {
-						log.Printf("error parsing string to int for invalid config %s %v",responseBodyConfigValue,err)
+					if err != nil {
+						log.Printf("error parsing string to int for invalid config %s %v", responseBodyConfigValue, err)
 						return nil // invalid config
 					}
 					var interfaceArrayTypeValue []interface{}
-					ok2:=false
+					ok2 := false
 					/* As we are using config like txnTypes[2], value of txnTypes must be an array,
 					so typecast to []interface{} */
 					interfaceArrayTypeValue, ok2 = (requestBodyValueMapOfInterfaceType[jsonKeyName]).([]interface{})
@@ -127,7 +127,7 @@ func getResponseBodyValueFromRequestBody(responseBodyConfigValue string, request
 						requestBodyValueInterfaceType = interfaceArrayTypeValue[arrIndexInt]
 					} else {
 						//throw error
-						log.Printf("invalid config %s, trying to typecast non-array to array",responseBodyConfigValue)
+						log.Printf("invalid config %s, trying to typecast non-array to array", responseBodyConfigValue)
 						return nil
 					}
 				} else if openingBracketIndex == -1 && closingBracketIndex == -1 {

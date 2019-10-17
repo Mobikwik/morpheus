@@ -13,38 +13,38 @@ func setResponseHeaderMap(responseHeaderConfigJsonMap map[string]interface{}, re
 	for headerName, responseConfigKeyValueGenericType := range responseHeaderConfigJsonMap {
 
 		log.Printf("setting value for response header %s of type %T config value %s",
-			headerName,responseConfigKeyValueGenericType,responseConfigKeyValueGenericType)
+			headerName, responseConfigKeyValueGenericType, responseConfigKeyValueGenericType)
 
 		var responseHeaderValueArr []string
 
-		switch responseConfigKeyValue:= responseConfigKeyValueGenericType.(type) {
+		switch responseConfigKeyValue := responseConfigKeyValueGenericType.(type) {
 		case string:
-			responseHeaderValueArr= getResponseHeaderConfigValueFromRequestHeader(responseConfigKeyValue, requestHeaderMap)
-			log.Printf("setting single value %s for header %s", responseHeaderValueArr,headerName)
+			responseHeaderValueArr = getResponseHeaderConfigValueFromRequestHeader(responseConfigKeyValue, requestHeaderMap)
+			log.Printf("setting single value %s for header %s", responseHeaderValueArr, headerName)
 		/*case []string:
 		for i, responseConfigKeyValueSingle := range responseConfigKeyValue {
 			responseHeaderValueArr = append(responseHeaderValueArr, getResponseHeaderConfigValueFromRequestHeader(responseConfigKeyValueSingle, requestHeaderMap)[0])
 			log.Printf("adding array value %s on index %d for header %s ", responseHeaderValueArr[i],i,headerName)
 		}*/
-		case  []interface{}:
-			log.Printf("handling response header value config for header %s config type is %T",headerName,responseConfigKeyValueGenericType)
+		case []interface{}:
+			log.Printf("handling response header value config for header %s config type is %T", headerName, responseConfigKeyValueGenericType)
 
 			for i, responseConfigKeyValueSingle := range responseConfigKeyValue {
-				log.Printf("getting value for config %s",responseConfigKeyValueSingle)
+				log.Printf("getting value for config %s", responseConfigKeyValueSingle)
 				responseConfigKeyValueSingleStr, ok := responseConfigKeyValueSingle.(string)
 				if ok {
 					responseHeaderValueArr = append(responseHeaderValueArr, getResponseHeaderConfigValueFromRequestHeader(responseConfigKeyValueSingleStr, requestHeaderMap)[0])
-					log.Printf("adding array value %s on index %d for header %s ", responseHeaderValueArr[i],i,headerName)
+					log.Printf("adding array value %s on index %d for header %s ", responseHeaderValueArr[i], i, headerName)
 				}
 
 			}
 
 		default:
-			log.Printf("invalid response header value config for header %s config type is %T",headerName,responseConfigKeyValueGenericType)
+			log.Printf("invalid response header value config for header %s config type is %T", headerName, responseConfigKeyValueGenericType)
 
 		}
 
-		log.Printf("setting final value for response header %s = %s",headerName, responseHeaderValueArr)
+		log.Printf("setting final value for response header %s = %s", headerName, responseHeaderValueArr)
 		//responseHeaderConfigJsonMap[headerName] = responseHeaderValueArr
 		responseHeaderValuesJsonMap[headerName] = responseHeaderValueArr
 	}
@@ -75,11 +75,11 @@ func getResponseHeaderConfigValueFromRequestHeader(responseHeaderConfigValue str
 
 		if openingBracketIndex == len(responseHeaderConfigValueSplit[1])-3 && closingBracketIndex == len(responseHeaderConfigValueSplit[1])-1 {
 			// remove [2] part from Content-Type[2], set canonicalHeaderName to Content-Type
-			canonicalHeaderName=canonicalHeaderName[0:openingBracketIndex]
-			arrIndex := responseHeaderConfigValueSplit[1][openingBracketIndex+1:closingBracketIndex]
+			canonicalHeaderName = canonicalHeaderName[0:openingBracketIndex]
+			arrIndex := responseHeaderConfigValueSplit[1][openingBracketIndex+1 : closingBracketIndex]
 			arrIndexInt, err := strconv.Atoi(arrIndex) // convert string to int
-			if err!=nil {
-				log.Print("error parsing string to int ",err)
+			if err != nil {
+				log.Print("error parsing string to int ", err)
 				panic(err)
 			}
 			return []string{requestHeaderMap[canonicalHeaderName][arrIndexInt]}
@@ -100,4 +100,3 @@ func getResponseHeaderConfigValueFromRequestHeader(responseHeaderConfigValue str
 	}
 	return []string{}
 }
-

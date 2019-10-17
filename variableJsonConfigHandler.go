@@ -8,15 +8,15 @@ import (
 )
 
 type VariableConfig struct {
-	Id,Name,DataType,Regex string
-	MinLength,MaxLength,FixLength,MinValue,MaxValue *int
-	PossibleStringValues []string
-	PossibleIntValues []int
+	Id, Name, DataType, Regex                           string
+	MinLength, MaxLength, FixLength, MinValue, MaxValue *int
+	PossibleStringValues                                []string
+	PossibleIntValues                                   []int
 }
 
 func readVariableJsonFromDB() string {
 
-	testVariableConfigJson :=`[
+	testVariableConfigJson := `[
 
 {
 	"id":"1",
@@ -52,20 +52,18 @@ func readVariableJsonFromDB() string {
 }
 	]`
 
-return testVariableConfigJson
+	return testVariableConfigJson
 }
 
 func parseVariableConfig(variableConfigJson string) []VariableConfig {
-
 
 	log.Print(variableConfigJson)
 
 	var variableConfig []VariableConfig
 	json.Unmarshal([]byte(variableConfigJson), &variableConfig)
 
-
 	for i, v := range variableConfig {
-		log.Print("variableConfig values for i= ",i, v)
+		log.Print("variableConfig values for i= ", i, v)
 		//log.Printf("name %s minLength %d",v.Name,*(v.MinLength))
 	}
 
@@ -84,9 +82,9 @@ func variableConfigWebGetHandler(w http.ResponseWriter, r *http.Request) {
 	var variableConfigJson = readVariableJsonFromDB()
 	variableConfigArr = parseVariableConfig(variableConfigJson)
 
-	log.Print("parsed json of variables is ",variableConfigArr)
+	log.Print("parsed json of variables is ", variableConfigArr)
 
-	fmt.Fprintf(w,"%v",variableConfigArr)
+	fmt.Fprintf(w, "%v", variableConfigArr)
 
 	log.Print("exiting variableConfigWebGetHandler")
 }

@@ -5,67 +5,63 @@ import (
 	"testing"
 )
 
-
-func TestResponseBodyConfig_ForSimpleValueFromRequestBody(t *testing.T)  {
-	responseBodyConfigValue:="simpleValue"
+func TestResponseBodyConfig_ForSimpleValueFromRequestBody(t *testing.T) {
+	responseBodyConfigValue := "simpleValue"
 	expected := "simpleValue"
 
-	runResponseBodyConfigTest(responseBodyConfigValue, expected,t)
+	runResponseBodyConfigTest(responseBodyConfigValue, expected, t)
 }
 
-func TestResponseBodyConfig_ForNestedValueFromRequestBody(t *testing.T)  {
+func TestResponseBodyConfig_ForNestedValueFromRequestBody(t *testing.T) {
 
-	responseBodyConfigValue:="requestJsonBody.txnDetails.orderId"
-	expected:="abcd"
+	responseBodyConfigValue := "requestJsonBody.txnDetails.orderId"
+	expected := "abcd"
 
-	runResponseBodyConfigTest(responseBodyConfigValue, expected,t)
+	runResponseBodyConfigTest(responseBodyConfigValue, expected, t)
 }
 
+func TestResponseBodyConfig_ForNestedSingleArrayValueFromRequestBody(t *testing.T) {
 
-func TestResponseBodyConfig_ForNestedSingleArrayValueFromRequestBody(t *testing.T)  {
+	responseBodyConfigValue := "requestJsonBody.txnDetails.txnTypes[2]"
+	expected := "2"
 
-	responseBodyConfigValue:="requestJsonBody.txnDetails.txnTypes[2]"
-	expected :="2"
-
-	runResponseBodyConfigTest(responseBodyConfigValue, expected,t)
+	runResponseBodyConfigTest(responseBodyConfigValue, expected, t)
 }
 
+func TestResponseBodyConfig_ForNestedMultipleArrayValueFromRequestBody(t *testing.T) {
 
-func TestResponseBodyConfig_ForNestedMultipleArrayValueFromRequestBody(t *testing.T)  {
-
-	responseBodyConfigValue:= []interface{} {
+	responseBodyConfigValue := []interface{}{
 		"requestJsonBody.txnDetails.txnTypes[2]",
 		"requestJsonBody.txnDetails.txnTypes[3]",
 	}
-	expected := []interface{} {"2","3"}
+	expected := []interface{}{"2", "3"}
 
-	runResponseBodyArrayTypeConfigTest(responseBodyConfigValue, expected,t)
+	runResponseBodyArrayTypeConfigTest(responseBodyConfigValue, expected, t)
 }
 
+func TestResponseBodyConfig_ForNestedEntireArrayFromRequestBody(t *testing.T) {
 
-func TestResponseBodyConfig_ForNestedEntireArrayFromRequestBody(t *testing.T)  {
+	responseBodyConfigValue := "requestJsonBody.txnDetails.txnTypes"
+	expected := []interface{}{"0", "1", "2", "3"}
 
-	responseBodyConfigValue:="requestJsonBody.txnDetails.txnTypes"
-	expected := []interface{} {"0","1","2","3"}
-
-	runResponseBodyConfigTest(responseBodyConfigValue, expected,t)
+	runResponseBodyConfigTest(responseBodyConfigValue, expected, t)
 }
 
-func TestResponseBodyConfig_ForObjectValueFromRequestBody(t *testing.T)  {
+func TestResponseBodyConfig_ForObjectValueFromRequestBody(t *testing.T) {
 
-	responseBodyConfigValue:="requestJsonBody.txnDetails"
-	expected := map[string]interface{} {
-		"orderId": "abcd",
-		"amount": "123",
-		"txnTypes":[]interface{}{"0","1","2","3"},
+	responseBodyConfigValue := "requestJsonBody.txnDetails"
+	expected := map[string]interface{}{
+		"orderId":  "abcd",
+		"amount":   "123",
+		"txnTypes": []interface{}{"0", "1", "2", "3"},
 	}
-	runResponseBodyConfigTest(responseBodyConfigValue, expected,t)
+	runResponseBodyConfigTest(responseBodyConfigValue, expected, t)
 }
 
 func runResponseBodyArrayTypeConfigTest(responseBodyConfigValue []interface{},
 	expected []interface{}, t *testing.T) {
 
-	requestJson:=`{ "action":"debit","txnDetails": {"orderId": "abcd","amount": 123,"txnTypes":["0","1","2","3"]}}`
+	requestJson := `{ "action":"debit","txnDetails": {"orderId": "abcd","amount": 123,"txnTypes":["0","1","2","3"]}}`
 	var requestBodyJsonMap map[string]interface{}
 	err := json.Unmarshal([]byte(requestJson), &requestBodyJsonMap)
 	if err != nil {
@@ -74,20 +70,20 @@ func runResponseBodyArrayTypeConfigTest(responseBodyConfigValue []interface{},
 
 	actual := processResponseConfigArrayType(responseBodyConfigValue, requestBodyJsonMap)
 
-	if len(expected)!=len(actual){
-		t.Errorf("expected array value %v type %T actual value %v type %T", expected,expected, actual, actual)
+	if len(expected) != len(actual) {
+		t.Errorf("expected array value %v type %T actual value %v type %T", expected, expected, actual, actual)
 	}
-	for i,v:=range expected{
-		if v!= actual[i] {
-			t.Errorf("expected array type value %v type %T actual value %v type %T", v,v, actual[i], actual[i])
+	for i, v := range expected {
+		if v != actual[i] {
+			t.Errorf("expected array type value %v type %T actual value %v type %T", v, v, actual[i], actual[i])
 		}
 	}
 }
 
 func runResponseBodyConfigTest(responseBodyConfigValue string, expected interface{},
-		t *testing.T) {
+	t *testing.T) {
 
-	requestJson:=`{ "action":"debit","txnDetails": {"orderId": "abcd","amount": "123","txnTypes":["0","1","2","3"]}}`
+	requestJson := `{ "action":"debit","txnDetails": {"orderId": "abcd","amount": "123","txnTypes":["0","1","2","3"]}}`
 	var requestBodyJsonMap map[string]interface{}
 	err := json.Unmarshal([]byte(requestJson), &requestBodyJsonMap)
 	if err != nil {
@@ -107,7 +103,7 @@ func compareValues(expected interface{}, actual interface{}, t *testing.T) {
 			t.Errorf("expected array value %v type %T actual value %v type %T", expectedTypedValue, expectedTypedValue, actualArrayTypeValue, actualArrayTypeValue)
 		}
 		for i, v := range expectedTypedValue {
-			compareValues(v,actualArrayTypeValue[i],t)
+			compareValues(v, actualArrayTypeValue[i], t)
 			/*if v != actualArrayTypeValue[i] {
 				t.Errorf("expected array type value %v type %T actual value %v type %T", v, v, actualArrayTypeValue[i], actualArrayTypeValue[i])
 			}*/
@@ -119,7 +115,7 @@ func compareValues(expected interface{}, actual interface{}, t *testing.T) {
 			t.Errorf("expected array value %v type %T actual value %v type %T", expectedTypedValue, expectedTypedValue, actualArrayTypeValue, actualArrayTypeValue)
 		}
 		for i, v := range expectedTypedValue {
-			compareValues(v,actualArrayTypeValue[i],t)
+			compareValues(v, actualArrayTypeValue[i], t)
 		}
 	case map[string]interface{}:
 
@@ -130,8 +126,8 @@ func compareValues(expected interface{}, actual interface{}, t *testing.T) {
 		}
 
 		for key, v := range expectedTypedValue {
-			compareValues(v,actualMapTypeValue[key],t)
-		/*	if value != actualMapTypeValue[key] {
+			compareValues(v, actualMapTypeValue[key], t)
+			/*	if value != actualMapTypeValue[key] {
 				t.Errorf("expected value %v type %T actual value %v type %T",
 					value, value, actualMapTypeValue[key], actualMapTypeValue[key])
 			}*/
