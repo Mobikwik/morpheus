@@ -77,11 +77,11 @@ func runResponseHeaderConfigTest(responseHeaderConfigValue string, expected inte
 
 	// Go converts all header keys to Canonical form, hence keeping header names in canonical form here
 	requestHeaderJsonMap := map[string][]string{
-		"Authorization": []string{"hfdhfbwfbg"},
-		"Content-Type":  []string{"application/json", "text/html", "application/pdf"},
-		"X-Deviceid":    []string{"Device1234"},
-		"X-Clientid":    []string{"3"},
-		"X-Checksum":    []string{"hfsdhfbudgwq8gdqwudqu"},
+		"Authorization": {"hfdhfbwfbg"},
+		"Content-Type":  {"application/json", "text/html", "application/pdf"},
+		"X-Deviceid":    {"Device1234"},
+		"X-Clientid":    {"3"},
+		"X-Checksum":    {"hfsdhfbudgwq8gdqwudqu"},
 	}
 
 	actual := getResponseHeaderConfigValueFromRequestHeader(responseHeaderConfigValue, requestHeaderJsonMap)
