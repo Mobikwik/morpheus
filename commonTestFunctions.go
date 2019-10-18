@@ -1,6 +1,8 @@
 package main
 
-import "testing"
+import (
+	"testing"
+)
 
 func compareValues(expected interface{}, actual interface{}, t *testing.T) {
 	switch expectedTypedValue := expected.(type) {
@@ -12,9 +14,6 @@ func compareValues(expected interface{}, actual interface{}, t *testing.T) {
 		}
 		for i, v := range expectedTypedValue {
 			compareValues(v, actualArrayTypeValue[i], t)
-			/*if v != actualArrayTypeValue[i] {
-				t.Errorf("expected array type value %v type %T actual value %v type %T", v, v, actualArrayTypeValue[i], actualArrayTypeValue[i])
-			}*/
 		}
 
 	case []string:
@@ -35,10 +34,6 @@ func compareValues(expected interface{}, actual interface{}, t *testing.T) {
 
 		for key, v := range expectedTypedValue {
 			compareValues(v, actualMapTypeValue[key], t)
-			/*	if value != actualMapTypeValue[key] {
-				t.Errorf("expected value %v type %T actual value %v type %T",
-					value, value, actualMapTypeValue[key], actualMapTypeValue[key])
-			}*/
 		}
 
 	case interface{}:
@@ -48,4 +43,6 @@ func compareValues(expected interface{}, actual interface{}, t *testing.T) {
 	default:
 		t.Errorf("unexpected type passed %T", expectedTypedValue)
 	}
+
+	
 }
