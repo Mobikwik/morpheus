@@ -4,6 +4,7 @@ import (
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+	"os"
 )
 
 func newRouter() *mux.Router {
@@ -32,7 +33,11 @@ func newRouter() *mux.Router {
 
 func main() {
 	log.Print("entering mocking main")
+
+	portNumber := os.Args[1]
+	log.Print("port to run morpheus is " + portNumber)
+
 	r := newRouter()
-	http.ListenAndServe(":8080", r)
+	http.ListenAndServe(":"+portNumber, r)
 	log.Print("exiting mocking main")
 }
