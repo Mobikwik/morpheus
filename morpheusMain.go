@@ -35,9 +35,10 @@ func main() {
 	log.Print("entering mocking main")
 
 	portNumber := os.Args[1]
-	log.Print("port to run morpheus is " + portNumber)
-
 	r := newRouter()
-	http.ListenAndServe(":"+portNumber, r)
+	err := http.ListenAndServe(":"+portNumber, r)
+	if nil != err {
+		log.Printf("error in running morpheus %v on port number %s", err, portNumber)
+	}
 	log.Print("exiting mocking main")
 }
