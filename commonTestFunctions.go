@@ -42,8 +42,5 @@ func compareValues(expected interface{}, actual interface{}, t *testing.T) {
 		}
 	default:
 		t.Errorf("unexpected type passed %T", expectedTypedValue)
-
-		
 	}
-
 }
