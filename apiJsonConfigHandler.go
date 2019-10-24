@@ -34,6 +34,7 @@ type ApiConfig struct {
 
 func readApiConfigFromDB() string {
 
+	//TODO how to read entire config from DB
 	testApiConfigJson := `[
 {
 	"id":"1",	
@@ -177,17 +178,20 @@ func parseApiConfig(apiConfigJson string) []ApiConfig {
 // Return API config stored in DB
 func apiConfigWebGetHandler(w http.ResponseWriter, r *http.Request) {
 	log.Print("inside apiConfigWebGetHandler")
-	apiKey := "/api/p/wallet/credit3~POST"
+	queryStringValues := r.URL.Query()
+	apiKey := ""
+	if len(queryStringValues) >= 2 {
+		apiKey = queryStringValues["apiUrl"][0] + "~" + queryStringValues["requestMethod"][0]
+	}
+	// fetch all configs
 	if len(apiKey) == 0 {
 		var apiConfigArr []ApiConfig
 		apiConfigArr = getApiConfigArray()
 		log.Print("parsed json of api config is ", apiConfigArr)
 		fmt.Fprintf(w, "%v", apiConfigArr)
 	} else {
-		var apiConfig ApiConfig
 		data := readApiConfigFromDB2(apiKey)
-		json.Unmarshal([]byte(data), &apiConfig)
-		fmt.Fprintf(w, "%v", apiConfig)
+		fmt.Fprintf(w, "%v", data)
 	}
 	log.Print("exiting apiConfigWebGetHandler")
 }
