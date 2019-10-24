@@ -185,12 +185,13 @@ func apiConfigWebGetHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	// fetch all configs
 	if len(apiKey) == 0 {
-		var apiConfigArr []ApiConfig
+		/*var apiConfigArr []ApiConfig
 		apiConfigArr = getApiConfigArray()
-		log.Print("parsed json of api config is ", apiConfigArr)
-		fmt.Fprintf(w, "%v", apiConfigArr)
+		log.Print("parsed json of api config is ", apiConfigArr)*/
+		data := readEntireApiConfigFromDB()
+		fmt.Fprintf(w, "%v", data)
 	} else {
-		data := readApiConfigFromDB2(apiKey)
+		data := readSingleApiConfigFromDB(apiKey)
 		fmt.Fprintf(w, "%v", data)
 	}
 	log.Print("exiting apiConfigWebGetHandler")
@@ -220,9 +221,13 @@ func storeApiConfigInDB(requestBodyJsonString, apiKey string) error {
 	return updateInDB("mockApiConfig", apiKey, requestBodyJsonString)
 }
 
-func readApiConfigFromDB2(apiKey string) string {
+func readSingleApiConfigFromDB(apiKey string) string {
 	data, _ := read("mockApiConfig", apiKey)
 	return data
+}
+
+func readEntireApiConfigFromDB() map[string]string {
+	return readAllKeysInMap("mockApiConfig")
 }
 
 func findMatchingApiConfig(urlToSearch, requestMethod string) *ApiConfig {

@@ -69,6 +69,26 @@ func read(bucketName, key string) (string, error) {
 	return data, nil
 }
 
+func readAllKeysInMap(bucketName string) map[string]string {
+
+	data := make(map[string]string)
+	db := createDBConnection()
+
+	db.View(func(tx *bolt.Tx) error {
+		//bucket:= createBucket(bucketName,tx)
+		bucket := tx.Bucket([]byte(bucketName))
+
+		bucket.ForEach(func(k, v []byte) error {
+			data[string(k)] = string(v)
+			return nil
+		})
+		return nil
+	})
+
+	defer closeDBConnection(db)
+	return data
+}
+
 func closeDBConnection(db *bolt.DB) {
 	db.Close()
 	log.Print("closed db connection")
