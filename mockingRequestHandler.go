@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"runtime/debug"
@@ -33,15 +32,7 @@ func mockingRequestHandler(w http.ResponseWriter, r *http.Request) {
 			"For example: \"http://localhost:8080/api/customer/getOrders\"")
 		return
 	} else {
-		var body = r.Body
-		var bodyBytes []byte
-		if body != nil {
-			var err error
-			bodyBytes, err = ioutil.ReadAll(body)
-			if err != nil {
-				panic(err)
-			}
-		}
+		bodyBytes := readFromRequestBody(r.Body)
 
 		log.Printf("api to mock is %s request method is %s", url, r.Method)
 

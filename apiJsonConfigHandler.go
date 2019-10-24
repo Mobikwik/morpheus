@@ -174,13 +174,51 @@ func parseApiConfig(apiConfigJson string) []ApiConfig {
 	return apiConfig
 }
 
+// Return API config stored in DB
 func apiConfigWebGetHandler(w http.ResponseWriter, r *http.Request) {
 	log.Print("inside apiConfigWebGetHandler")
-	var apiConfigArr []ApiConfig
-	apiConfigArr = getApiConfigArray()
-	log.Print("parsed json of variables is ", apiConfigArr)
-	fmt.Fprintf(w, "%v", apiConfigArr)
+	apiKey := "/api/p/wallet/credit3~POST"
+	if len(apiKey) == 0 {
+		var apiConfigArr []ApiConfig
+		apiConfigArr = getApiConfigArray()
+		log.Print("parsed json of api config is ", apiConfigArr)
+		fmt.Fprintf(w, "%v", apiConfigArr)
+	} else {
+		var apiConfig ApiConfig
+		data := readApiConfigFromDB2(apiKey)
+		json.Unmarshal([]byte(data), &apiConfig)
+		fmt.Fprintf(w, "%v", apiConfig)
+	}
 	log.Print("exiting apiConfigWebGetHandler")
+}
+
+// Create new API config
+func apiConfigWebPostHandler(w http.ResponseWriter, r *http.Request) {
+	log.Print("inside apiConfigWebPostHandler")
+
+	requestBody := readFromRequestBody(r.Body)
+	requestBodyJsonString := string(requestBody)
+
+	var newApiConfig ApiConfig
+	err := json.Unmarshal(requestBody, &newApiConfig)
+	if err != nil {
+		panic(err)
+	}
+	log.Println("parsed request body json for new api config is ", requestBodyJsonString)
+
+	apiKey := newApiConfig.Url + "~" + newApiConfig.Method
+	err = storeApiConfigInDB(requestBodyJsonString, apiKey)
+
+	log.Print("exiting apiConfigWebPostHandler")
+}
+
+func storeApiConfigInDB(requestBodyJsonString, apiKey string) error {
+	return updateInDB("mockApiConfig", apiKey, requestBodyJsonString)
+}
+
+func readApiConfigFromDB2(apiKey string) string {
+	data, _ := read("mockApiConfig", apiKey)
+	return data
 }
 
 func findMatchingApiConfig(urlToSearch, requestMethod string) *ApiConfig {

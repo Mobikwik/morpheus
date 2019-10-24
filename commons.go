@@ -1,8 +1,21 @@
 package main
 
 import (
+	"io"
+	"io/ioutil"
 	"testing"
 )
+
+func readFromRequestBody(body io.ReadCloser) []byte {
+	if body != nil {
+		bodyBytes, err := ioutil.ReadAll(body)
+		if err != nil {
+			panic(err)
+		}
+		return bodyBytes
+	}
+	return []byte{}
+}
 
 func compareValues(expected interface{}, actual interface{}, t *testing.T) {
 	switch expectedTypedValue := expected.(type) {

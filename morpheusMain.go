@@ -16,6 +16,7 @@ func newRouter() *mux.Router {
 	// Handlers for APIs that return configs
 	r.HandleFunc("/variableConfig", variableConfigWebGetHandler).Methods("GET")
 	r.HandleFunc("/apiConfig", apiConfigWebGetHandler).Methods("GET")
+	r.HandleFunc("/apiConfig", apiConfigWebPostHandler).Methods("POST")
 
 	// Handler for mocking
 	r.PathPrefix("/").HandlerFunc(mockingRequestHandler).Methods("GET", "POST")
