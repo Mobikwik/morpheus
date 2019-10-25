@@ -209,16 +209,16 @@ func apiConfigWebPostHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("parsed request body json for new api config is ", requestBodyJsonString)
 
 	apiKey := newApiConfig.Url + "~" + newApiConfig.Method
-	err = storeApiConfigInDB(requestBodyJsonString, apiKey)
+	storeApiConfigInDB(requestBodyJsonString, apiKey)
 
 	log.Print("exiting apiConfigWebPostHandler")
 }
 
-func storeApiConfigInDB(requestBodyJsonString, apiKey string) error {
+func storeApiConfigInDB(requestBodyJsonString, apiKey string) {
 	var apiConfigJson ApiConfig
 	json.Unmarshal([]byte(requestBodyJsonString), &apiConfigJson)
 	// set unique id
-	return updateApiConfigInDB("mockApiConfig", apiKey, apiConfigJson)
+	updateApiConfigInDB("mockApiConfig", apiKey, apiConfigJson)
 }
 
 func readSingleApiConfigFromDB(apiKey string) string {

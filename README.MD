@@ -18,3 +18,6 @@ error handling:
     
 git pre-commit hook is in file ".git/hooks/pre-commit". Modified to run "go fmt" automatically before every commit
     https://go.googlesource.com/go/+/dev.tls/misc/git/pre-commit
+    
+This project uses BBoltDB:
+    https://github.com/etcd-io/bbolt

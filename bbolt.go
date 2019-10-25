@@ -7,32 +7,49 @@ import (
 	"time"
 )
 
-var db2 *bolt.DB
+func createReadOnlyDBConnection() *bolt.DB {
 
-func createDBConnection() *bolt.DB {
 	//TODO take DB file path, timeout etc from env.properties file
-	db, err := bolt.Open("bboltDB/morpheus.db", 0600, &bolt.Options{Timeout: 1 * time.Second})
+	readOnlyDBConnection, err := bolt.Open("bboltDB/morpheus.db", 0600,
+		&bolt.Options{Timeout: 1 * time.Second, ReadOnly: true})
 	if err != nil {
 		log.Print(err)
+		panic(err)
 	} else {
-		log.Printf("BBoltDB connection opened successfully to path %s", db.Path())
+		log.Printf("BBoltDB read only connection opened successfully to path %s", readOnlyDBConnection.Path())
+		return readOnlyDBConnection
 	}
-	return db
 }
 
-func updateApiConfigInDB(bucketName, key string, apiConfig ApiConfig) error {
+func createReadWriteDBConnection() *bolt.DB {
+
+	//TODO take DB file path, timeout etc from env.properties file
+	readWriteDBConnection, err := bolt.Open("bboltDB/morpheus.db", 0600,
+		&bolt.Options{Timeout: 1 * time.Second})
+	if err != nil {
+		log.Print(err)
+		panic(err)
+	} else {
+		log.Printf("BBoltDB read-write connection opened successfully to path %s", readWriteDBConnection.Path())
+		return readWriteDBConnection
+	}
+}
+
+func updateApiConfigInDB(bucketName, key string, apiConfig ApiConfig) {
 
 	log.Print("storing api config for key ", key)
-	db := createDBConnection()
 
-	err := db.Update(func(tx *bolt.Tx) error {
+	readWriteDBConnection := createReadWriteDBConnection()
+
+	err := readWriteDBConnection.Update(func(tx *bolt.Tx) error {
+		// bucket must be created/opened in same tx, hence passing tx in createBucket
 		bucket := createBucket(bucketName, tx)
 		id, _ := bucket.NextSequence()
 		apiConfig.Id = id
 		apiConfig, err := json.Marshal(&apiConfig)
 		if nil != err {
 			log.Printf("error occured while updating DB %v", err)
-			return err
+			panic(err)
 		}
 		err = bucket.Put([]byte(key), apiConfig)
 
@@ -44,23 +61,17 @@ func updateApiConfigInDB(bucketName, key string, apiConfig ApiConfig) error {
 	})
 
 	if nil != err {
-		return err
+		panic(err)
 	}
-	defer closeDBConnection(db)
-	return nil
+	defer closeDBConnection(readWriteDBConnection)
 }
 
 func read(bucketName, key string) (string, error) {
 
-	/*if nil==db{
-		createDBConnection()
-		defer db.Close()
-	}*/
-
-	db := createDBConnection()
+	readOnlyDBConnection := createReadOnlyDBConnection()
 
 	var data string
-	err := db.View(func(tx *bolt.Tx) error {
+	err := readOnlyDBConnection.View(func(tx *bolt.Tx) error {
 		//bucket:= createBucket(bucketName,tx)
 		bucket := tx.Bucket([]byte(bucketName))
 		dataBytes := bucket.Get([]byte(key))
@@ -72,16 +83,16 @@ func read(bucketName, key string) (string, error) {
 		log.Printf("error occured while reading from DB %v", err)
 		return "", err
 	}
-	defer closeDBConnection(db)
+	defer closeDBConnection(readOnlyDBConnection)
 	return data, nil
 }
 
 func readAllKeysInMap(bucketName string) map[string]string {
 
 	data := make(map[string]string)
-	db := createDBConnection()
+	readOnlyDBConnection := createReadOnlyDBConnection()
 
-	db.View(func(tx *bolt.Tx) error {
+	readOnlyDBConnection.View(func(tx *bolt.Tx) error {
 		//bucket:= createBucket(bucketName,tx)
 		bucket := tx.Bucket([]byte(bucketName))
 
@@ -91,13 +102,13 @@ func readAllKeysInMap(bucketName string) map[string]string {
 		})
 		return nil
 	})
-
-	defer closeDBConnection(db)
+	defer closeDBConnection(readOnlyDBConnection)
 	return data
 }
 
 func closeDBConnection(db *bolt.DB) {
 	db.Close()
+	db = nil
 	log.Print("closed db connection")
 }
 
