@@ -1,3 +1,6 @@
+running application from command line, skipping test files:
+    go run $(ls -t | grep -v _test | grep .go) 8080
+
 GoLang project Directory structure:
     https://medium.com/golang-learn/go-project-layout-e5213cdcfaa2
     https://vsupalov.com/go-folder-structure/
