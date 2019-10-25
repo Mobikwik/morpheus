@@ -8,7 +8,6 @@ import (
 )
 
 type Request struct {
-	ResponseDelayInSeconds int
 	// Header config values can be of type string or []string.Hence using generic interface{} type
 	RequestHeaders map[string]interface{}
 	// request body can have many types as string,numeric,array,another struct etc.Hence using generic interface{} type
@@ -24,24 +23,23 @@ type Response struct {
 }
 
 type ApiConfig struct {
-	Id             string
-	Url            string
-	Method         string
-	RequestConfig  Request
-	ResponseConfig Response
+	Id                     string
+	Url                    string
+	Method                 string
+	ResponseDelayInSeconds int
+	RequestConfig          Request
+	ResponseConfig         Response
 }
 
 /*func readApiConfigFromDB() string {
 
-
-	//TODO how to read entire config from DB
 	testApiConfigJson := `[
 {
 	"id":"1",
 	"url": "/api/p/wallet/debit",
 	"method": "POST",
+	"responseDelayInSeconds": 30,
 	"requestConfig": {
-		"responseDelayInSeconds": 30,
 		"requestHeaders": {
 			"Content-Type": ["application/json","text/html","application/pdf"],
 			"Authorization": "$Auth",
@@ -100,8 +98,8 @@ type ApiConfig struct {
 	"id":"2",
 	"url": "/api/p/wallet/credit",
 	"method": "POST",
+	"responseDelayInSeconds": 30,
 	"requestConfig": {
-		"responseDelayInSeconds": 30,
 		"requestHeaders": {
 			"Content-Type": ["application/json","text/html","application/pdf"],
 			"Authorization": "$Auth",

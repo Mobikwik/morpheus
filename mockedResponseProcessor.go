@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"time"
 )
 
 const (
@@ -46,7 +47,16 @@ func doMocking(url, requestMethod string, requestBody []byte,
 			responseBody = "no matching config found for this api request"
 		} else {
 			log.Printf("found matching api config with id %s value %v ", matchingApiConfig.Id, matchingApiConfig)
-			return getMockedResponse(matchingApiConfig, requestBodyJson, requestHeader)
+			responseBody, responseHeaders := getMockedResponse(matchingApiConfig, requestBodyJson, requestHeader)
+
+			// check if api config has any setting for introducing delay in sending response. This is to test api timeouts
+			if matchingApiConfig.ResponseDelayInSeconds > 0 {
+				// time.Duration by default is in nanoseconds, converting it in seconds
+				var responseDelay = time.Duration(matchingApiConfig.ResponseDelayInSeconds) * time.Second
+				log.Printf("introducing response delay of %s seconds", responseDelay)
+				time.Sleep(responseDelay)
+			}
+			return responseBody, responseHeaders
 		}
 	} else {
 		log.Print("invalid Content-Type header", requestHeader[ContentTypeHeaderName])
