@@ -23,7 +23,7 @@ type Response struct {
 }
 
 type ApiConfig struct {
-	Id                     string
+	Id                     uint64
 	Url                    string
 	Method                 string
 	ResponseDelayInSeconds int
@@ -215,7 +215,10 @@ func apiConfigWebPostHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func storeApiConfigInDB(requestBodyJsonString, apiKey string) error {
-	return updateInDB("mockApiConfig", apiKey, requestBodyJsonString)
+	var apiConfigJson ApiConfig
+	json.Unmarshal([]byte(requestBodyJsonString), &apiConfigJson)
+	// set unique id
+	return updateApiConfigInDB("mockApiConfig", apiKey, apiConfigJson)
 }
 
 func readSingleApiConfigFromDB(apiKey string) string {

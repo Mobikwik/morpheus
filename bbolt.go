@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	bolt "go.etcd.io/bbolt"
 	"log"
 	"time"
@@ -17,17 +18,23 @@ func createDBConnection() *bolt.DB {
 		log.Printf("BBoltDB connection opened successfully to path %s", db.Path())
 	}
 	return db
-
 }
 
-func updateInDB(bucketName string, key, data string) error {
+func updateApiConfigInDB(bucketName, key string, apiConfig ApiConfig) error {
 
 	log.Print("storing api config for key ", key)
 	db := createDBConnection()
 
 	err := db.Update(func(tx *bolt.Tx) error {
 		bucket := createBucket(bucketName, tx)
-		err := bucket.Put([]byte(key), []byte(data))
+		id, _ := bucket.NextSequence()
+		apiConfig.Id = id
+		apiConfig, err := json.Marshal(&apiConfig)
+		if nil != err {
+			log.Printf("error occured while updating DB %v", err)
+			return err
+		}
+		err = bucket.Put([]byte(key), apiConfig)
 
 		if nil != err {
 			log.Printf("error occured while updating DB %v", err)
