@@ -16,5 +16,5 @@ JSON Parsing:
 error handling:
     https://golangbot.com/panic-and-recover/
     
-git pre-commit hook is in file ".git/hooks/pre-commit"
+git pre-commit hook is in file ".git/hooks/pre-commit". Modified to run go fmt automatically, so "go fmt" is run every time before commit
     https://go.googlesource.com/go/+/dev.tls/misc/git/pre-commit
