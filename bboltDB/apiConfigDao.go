@@ -11,9 +11,7 @@ func UpdateApiConfigInDB(bucketName, key string, apiConfig model.ApiConfig) {
 
 	log.Print("storing api config for key ", key)
 
-	readWriteDBConnection := createReadWriteDBConnection()
-
-	err := readWriteDBConnection.Update(func(tx *bbolt.Tx) error {
+	err := boltDBConnection.Update(func(tx *bbolt.Tx) error {
 		// bucket must be created/opened in same tx, hence passing tx in createBucket
 		bucket := createBucket(bucketName, tx)
 		id, _ := bucket.NextSequence()
@@ -35,16 +33,12 @@ func UpdateApiConfigInDB(bucketName, key string, apiConfig model.ApiConfig) {
 	if nil != err {
 		panic(err)
 	}
-	defer CloseDBConnection(readWriteDBConnection)
 }
-
 
 func ReadSingleKeyFromDB(bucketName, key string) (string, error) {
 
-	readOnlyDBConnection := CreateReadOnlyDBConnection()
-
 	var data string
-	err := readOnlyDBConnection.View(func(tx *bbolt.Tx) error {
+	err := boltDBConnection.View(func(tx *bbolt.Tx) error {
 		//bucket:= createBucket(bucketName,tx)
 		bucket := tx.Bucket([]byte(bucketName))
 		dataBytes := bucket.Get([]byte(key))
@@ -56,17 +50,14 @@ func ReadSingleKeyFromDB(bucketName, key string) (string, error) {
 		log.Printf("error occured while reading from DB %v", err)
 		return "", err
 	}
-	defer CloseDBConnection(readOnlyDBConnection)
 	return data, nil
 }
-
 
 func ReadAllKeysFromDB(bucketName string) map[string]string {
 
 	data := make(map[string]string)
-	readOnlyDBConnection := CreateReadOnlyDBConnection()
 
-	readOnlyDBConnection.View(func(tx *bbolt.Tx) error {
+	boltDBConnection.View(func(tx *bbolt.Tx) error {
 		//bucket:= createBucket(bucketName,tx)
 		bucket := tx.Bucket([]byte(bucketName))
 
@@ -76,6 +67,5 @@ func ReadAllKeysFromDB(bucketName string) map[string]string {
 		})
 		return nil
 	})
-	defer CloseDBConnection(readOnlyDBConnection)
 	return data
 }

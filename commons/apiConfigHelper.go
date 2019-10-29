@@ -46,6 +46,7 @@ func StoreApiConfigInDB(requestBodyJsonString, apiKey string) {
 }
 
 func ReadSingleApiConfigFromDB(apiKey string) string {
+	log.Print("reading api config for apikey ", apiKey)
 	data, _ := bboltDB.ReadSingleKeyFromDB("mockApiConfig", apiKey)
 	return data
 }
