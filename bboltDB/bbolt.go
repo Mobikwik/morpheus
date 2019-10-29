@@ -1,16 +1,18 @@
-package main
+package bboltDB
 
 import (
 	"encoding/json"
+	"github.com/Mobikwik/morpheus/model"
 	bolt "go.etcd.io/bbolt"
 	"log"
 	"time"
 )
 
+
 func createReadOnlyDBConnection() *bolt.DB {
 
 	//TODO take DB file path, timeout etc from env.properties file
-	readOnlyDBConnection, err := bolt.Open("bboltDB/morpheus.db", 0600,
+	readOnlyDBConnection, err := bolt.Open("bboltDBDataFile/morpheus.db", 0600,
 		&bolt.Options{Timeout: 1 * time.Second, ReadOnly: true})
 	if err != nil {
 		log.Print(err)
@@ -24,7 +26,7 @@ func createReadOnlyDBConnection() *bolt.DB {
 func createReadWriteDBConnection() *bolt.DB {
 
 	//TODO take DB file path, timeout etc from env.properties file
-	readWriteDBConnection, err := bolt.Open("bboltDB/morpheus.db", 0600,
+	readWriteDBConnection, err := bolt.Open("bboltDBDataFile/morpheus.db", 0600,
 		&bolt.Options{Timeout: 1 * time.Second})
 	if err != nil {
 		log.Print(err)
@@ -35,7 +37,7 @@ func createReadWriteDBConnection() *bolt.DB {
 	}
 }
 
-func updateApiConfigInDB(bucketName, key string, apiConfig ApiConfig) {
+func UpdateApiConfigInDB(bucketName, key string, apiConfig model.ApiConfig) {
 
 	log.Print("storing api config for key ", key)
 
@@ -66,7 +68,7 @@ func updateApiConfigInDB(bucketName, key string, apiConfig ApiConfig) {
 	defer closeDBConnection(readWriteDBConnection)
 }
 
-func read(bucketName, key string) (string, error) {
+func ReadSingleKeyFromDB(bucketName, key string) (string, error) {
 
 	readOnlyDBConnection := createReadOnlyDBConnection()
 
@@ -87,7 +89,7 @@ func read(bucketName, key string) (string, error) {
 	return data, nil
 }
 
-func readAllKeysInMap(bucketName string) map[string]string {
+func readAllKeysFromDB(bucketName string) map[string]string {
 
 	data := make(map[string]string)
 	readOnlyDBConnection := createReadOnlyDBConnection()

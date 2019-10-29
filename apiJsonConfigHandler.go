@@ -3,33 +3,11 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/Mobikwik/morpheus/bboltDB"
+	"github.com/Mobikwik/morpheus/model"
 	"log"
 	"net/http"
 )
-
-type Request struct {
-	// Header config values can be of type string or []string.Hence using generic interface{} type
-	RequestHeaders map[string]interface{}
-	// request body can have many types as string,numeric,array,another struct etc.Hence using generic interface{} type
-	RequestJsonBody map[string]interface{}
-}
-
-type Response struct {
-	HttpCode int
-	// Header config values can be of type string or []string.Hence using generic interface{} type
-	ResponseHeaders map[string]interface{}
-	// response body can have many types as string,numeric,array,another struct etc.Hence using generic interface{} type
-	ResponseJsonBody map[string]interface{}
-}
-
-type ApiConfig struct {
-	Id                     uint64
-	Url                    string
-	Method                 string
-	ResponseDelayInSeconds int
-	RequestConfig          Request
-	ResponseConfig         Response
-}
 
 /*func readApiConfigFromDB() string {
 
@@ -201,7 +179,7 @@ func apiConfigWebPostHandler(w http.ResponseWriter, r *http.Request) {
 	requestBody := readFromRequestBody(r.Body)
 	requestBodyJsonString := string(requestBody)
 
-	var newApiConfig ApiConfig
+	var newApiConfig model.ApiConfig
 	err := json.Unmarshal(requestBody, &newApiConfig)
 	if err != nil {
 		panic(err)
@@ -215,22 +193,22 @@ func apiConfigWebPostHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func storeApiConfigInDB(requestBodyJsonString, apiKey string) {
-	var apiConfigJson ApiConfig
+	var apiConfigJson model.ApiConfig
 	json.Unmarshal([]byte(requestBodyJsonString), &apiConfigJson)
 	// set unique id
-	updateApiConfigInDB("mockApiConfig", apiKey, apiConfigJson)
+	bboltDB.UpdateApiConfigInDB("mockApiConfig", apiKey, apiConfigJson)
 }
 
 func readSingleApiConfigFromDB(apiKey string) string {
-	data, _ := read("mockApiConfig", apiKey)
+	data, _ := bboltDB.ReadSingleKeyFromDB("mockApiConfig", apiKey)
 	return data
 }
 
 func readEntireApiConfigFromDB() map[string]string {
-	return readAllKeysInMap("mockApiConfig")
+	return bboltDB.readAllKeysFromDB("mockApiConfig")
 }
 
-func findMatchingApiConfig(urlToSearch, requestMethod string) *ApiConfig {
+func findMatchingApiConfig(urlToSearch, requestMethod string) *model.ApiConfig {
 	//var matchingApiConfig *ApiConfig
 
 	log.Printf("inside findMatchingApiConfig to find matching config for url %s requestMethod %s", urlToSearch, requestMethod)
@@ -238,7 +216,7 @@ func findMatchingApiConfig(urlToSearch, requestMethod string) *ApiConfig {
 	apiKey := makeApiConfigKey(urlToSearch, requestMethod)
 	apiJsonFromDB := readSingleApiConfigFromDB(apiKey)
 	if len(apiJsonFromDB) > 0 {
-		var apiConfigJson ApiConfig
+		var apiConfigJson model.ApiConfig
 		json.Unmarshal([]byte(apiJsonFromDB), &apiConfigJson)
 		log.Print("matching api config found with Id ", apiConfigJson.Id)
 		return &apiConfigJson

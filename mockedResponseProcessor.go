@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/Mobikwik/morpheus/model"
 	"log"
 	"strings"
 	"time"
@@ -46,7 +47,7 @@ func doMocking(url, requestMethod string, requestBody []byte,
 			log.Printf("no matching config found for this api request")
 			responseBody = "no matching config found for this api request"
 		} else {
-			log.Printf("found matching api config with id %s value %v ", matchingApiConfig.Id, matchingApiConfig)
+			log.Printf("found matching api config with id %v value %v", matchingApiConfig.Id, matchingApiConfig)
 			responseBody, responseHeaders := getMockedResponse(matchingApiConfig, requestBodyJson, requestHeader)
 
 			// check if api config has any setting for introducing delay in sending response. This is to test api timeouts
@@ -65,7 +66,7 @@ func doMocking(url, requestMethod string, requestBody []byte,
 	return responseBody, responseHeaders
 }
 
-func getMockedResponse(apiConfig *ApiConfig, requestBodyJsonMap map[string]interface{},
+func getMockedResponse(apiConfig *model.ApiConfig, requestBodyJsonMap map[string]interface{},
 	requestHeaderMap map[string][]string) (string, map[string][]string) {
 
 	var responseBody string
