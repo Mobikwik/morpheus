@@ -38,11 +38,11 @@ func FindMatchingApiConfig(urlToSearch, requestMethod string) *model.ApiConfig {
 func makeApiConfigKey(urlToSearch, requestMethod string) string {
 	return urlToSearch + "~" + requestMethod
 }
-func StoreApiConfigInDB(requestBodyJsonString, apiKey string) {
+func StoreApiConfigInDB(requestBodyJsonString, apiKey string) uint64 {
 	var apiConfigJson model.ApiConfig
 	json.Unmarshal([]byte(requestBodyJsonString), &apiConfigJson)
 	// set unique id
-	bboltDB.UpdateApiConfigInDB("mockApiConfig", apiKey, apiConfigJson)
+	return bboltDB.UpdateApiConfigInDB("mockApiConfig", apiKey, apiConfigJson)
 }
 
 func ReadSingleApiConfigFromDB(apiKey string) string {

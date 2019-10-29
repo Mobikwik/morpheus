@@ -187,8 +187,8 @@ func apiConfigWebPostHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("parsed request body json for new api config is ", requestBodyJsonString)
 
 	apiKey := newApiConfig.Url + "~" + newApiConfig.Method
-	commons.StoreApiConfigInDB(requestBodyJsonString, apiKey)
+	id := commons.StoreApiConfigInDB(requestBodyJsonString, apiKey)
+	fmt.Fprintf(w, "%v %d", "api config stored in DB with id ", id)
 
 	log.Print("exiting apiConfigWebPostHandler")
 }
-

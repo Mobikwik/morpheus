@@ -7,14 +7,15 @@ import (
 	"log"
 )
 
-func UpdateApiConfigInDB(bucketName, key string, apiConfig model.ApiConfig) {
+func UpdateApiConfigInDB(bucketName, key string, apiConfig model.ApiConfig) uint64 {
 
 	log.Print("storing api config for key ", key)
 
+	var id uint64
 	err := boltDBConnection.Update(func(tx *bbolt.Tx) error {
 		// bucket must be created/opened in same tx, hence passing tx in createBucket
 		bucket := createBucket(bucketName, tx)
-		id, _ := bucket.NextSequence()
+		id, _ = bucket.NextSequence()
 		apiConfig.Id = id
 		apiConfig, err := json.Marshal(&apiConfig)
 		if nil != err {
@@ -33,6 +34,8 @@ func UpdateApiConfigInDB(bucketName, key string, apiConfig model.ApiConfig) {
 	if nil != err {
 		panic(err)
 	}
+	log.Printf("api config stored in db with id %v", id)
+	return id
 }
 
 func ReadSingleKeyFromDB(bucketName, key string) (string, error) {
