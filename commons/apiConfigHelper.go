@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"github.com/Mobikwik/morpheus/bboltDB"
 	"github.com/Mobikwik/morpheus/model"
-	"go.etcd.io/bbolt"
 	"log"
 )
 
@@ -39,28 +38,6 @@ func FindMatchingApiConfig(urlToSearch, requestMethod string) *model.ApiConfig {
 func makeApiConfigKey(urlToSearch, requestMethod string) string {
 	return urlToSearch + "~" + requestMethod
 }
-
-func ReadSingleKeyFromDB(bucketName, key string) (string, error) {
-
-	readOnlyDBConnection := bboltDB.CreateReadOnlyDBConnection()
-
-	var data string
-	err := readOnlyDBConnection.View(func(tx *bbolt.Tx) error {
-		//bucket:= createBucket(bucketName,tx)
-		bucket := tx.Bucket([]byte(bucketName))
-		dataBytes := bucket.Get([]byte(key))
-		data = string(dataBytes)
-		return nil
-	})
-
-	if nil != err {
-		log.Printf("error occured while reading from DB %v", err)
-		return "", err
-	}
-	defer bboltDB.CloseDBConnection(readOnlyDBConnection)
-	return data, nil
-}
-
 func StoreApiConfigInDB(requestBodyJsonString, apiKey string) {
 	var apiConfigJson model.ApiConfig
 	json.Unmarshal([]byte(requestBodyJsonString), &apiConfigJson)
@@ -69,7 +46,7 @@ func StoreApiConfigInDB(requestBodyJsonString, apiKey string) {
 }
 
 func ReadSingleApiConfigFromDB(apiKey string) string {
-	data, _ := ReadSingleKeyFromDB("mockApiConfig", apiKey)
+	data, _ := bboltDB.ReadSingleKeyFromDB("mockApiConfig", apiKey)
 	return data
 }
 

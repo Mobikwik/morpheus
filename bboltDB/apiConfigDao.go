@@ -3,7 +3,7 @@ package bboltDB
 import (
 	"encoding/json"
 	"github.com/Mobikwik/morpheus/model"
-	bolt "go.etcd.io/bbolt"
+	"go.etcd.io/bbolt"
 	"log"
 )
 
@@ -13,7 +13,7 @@ func UpdateApiConfigInDB(bucketName, key string, apiConfig model.ApiConfig) {
 
 	readWriteDBConnection := createReadWriteDBConnection()
 
-	err := readWriteDBConnection.Update(func(tx *bolt.Tx) error {
+	err := readWriteDBConnection.Update(func(tx *bbolt.Tx) error {
 		// bucket must be created/opened in same tx, hence passing tx in createBucket
 		bucket := createBucket(bucketName, tx)
 		id, _ := bucket.NextSequence()
@@ -38,12 +38,35 @@ func UpdateApiConfigInDB(bucketName, key string, apiConfig model.ApiConfig) {
 	defer CloseDBConnection(readWriteDBConnection)
 }
 
+
+func ReadSingleKeyFromDB(bucketName, key string) (string, error) {
+
+	readOnlyDBConnection := CreateReadOnlyDBConnection()
+
+	var data string
+	err := readOnlyDBConnection.View(func(tx *bbolt.Tx) error {
+		//bucket:= createBucket(bucketName,tx)
+		bucket := tx.Bucket([]byte(bucketName))
+		dataBytes := bucket.Get([]byte(key))
+		data = string(dataBytes)
+		return nil
+	})
+
+	if nil != err {
+		log.Printf("error occured while reading from DB %v", err)
+		return "", err
+	}
+	defer CloseDBConnection(readOnlyDBConnection)
+	return data, nil
+}
+
+
 func ReadAllKeysFromDB(bucketName string) map[string]string {
 
 	data := make(map[string]string)
 	readOnlyDBConnection := CreateReadOnlyDBConnection()
 
-	readOnlyDBConnection.View(func(tx *bolt.Tx) error {
+	readOnlyDBConnection.View(func(tx *bbolt.Tx) error {
 		//bucket:= createBucket(bucketName,tx)
 		bucket := tx.Bucket([]byte(bucketName))
 

@@ -6,7 +6,17 @@ import (
 	"time"
 )
 
+var (
+	readOnlyDBConnection *bbolt.DB
+	readWriteDBConnection *bbolt.DB
+	err error
+)
+
 func CreateReadOnlyDBConnection() *bbolt.DB {
+
+	/*if nil!=readOnlyDBConnection{
+		return readOnlyDBConnection
+	}*/
 
 	//TODO take DB file path, timeout etc from env.properties file
 	readOnlyDBConnection, err := bbolt.Open("bboltDBDataFile/morpheus.db", 0600,
@@ -37,9 +47,13 @@ func createBucket(bucketName string, tx *bbolt.Tx) *bbolt.Bucket {
 
 func createReadWriteDBConnection() *bbolt.DB {
 
+	/*if nil!=readWriteDBConnection {
+		return readWriteDBConnection
+	}*/
+
 	//TODO take DB file path, timeout etc from env.properties file
-	readWriteDBConnection, err := bbolt.Open("bboltDBDataFile/morpheus.db", 0600,
-		&bbolt.Options{Timeout: 1 * time.Second})
+	readWriteDBConnection, err = bbolt.Open("bboltDBDataFile/morpheus.db", 0600,
+		&bbolt.Options{Timeout: 2 * time.Second})
 	if err != nil {
 		log.Print(err)
 		panic(err)
