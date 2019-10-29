@@ -1,7 +1,9 @@
-package main
+package webHandlers
 
 import (
 	"fmt"
+	"github.com/Mobikwik/morpheus/commons"
+	"github.com/Mobikwik/morpheus/service"
 	"log"
 	"net/http"
 	"runtime/debug"
@@ -32,11 +34,11 @@ func mockingRequestHandler(w http.ResponseWriter, r *http.Request) {
 			"For example: \"http://localhost:8080/api/customer/getOrders\"")
 		return
 	} else {
-		bodyBytes := readFromRequestBody(r.Body)
+		bodyBytes := commons.ReadFromRequestBody(r.Body)
 
 		log.Printf("api to mock is %s request method is %s", url, r.Method)
 
-		var responseBody, responseHeaders = doMocking(url, r.Method, bodyBytes, r.Header)
+		var responseBody, responseHeaders = service.DoMocking(url, r.Method, bodyBytes, r.Header)
 
 		log.Printf("final mocked response \n body: %s \n headers: %s", responseBody, responseHeaders)
 

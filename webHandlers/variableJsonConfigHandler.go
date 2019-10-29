@@ -1,4 +1,4 @@
-package main
+package webHandlers
 
 import (
 	"encoding/json"

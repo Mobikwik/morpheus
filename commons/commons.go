@@ -1,4 +1,4 @@
-package main
+package commons
 
 import (
 	"io"
@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func readFromRequestBody(body io.ReadCloser) []byte {
+func ReadFromRequestBody(body io.ReadCloser) []byte {
 	if body != nil {
 		bodyBytes, err := ioutil.ReadAll(body)
 		if err != nil {

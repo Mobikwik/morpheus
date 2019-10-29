@@ -2,6 +2,8 @@ package main
 
 import (
 	"encoding/json"
+	"github.com/Mobikwik/morpheus/commons"
+	"github.com/Mobikwik/morpheus/service"
 	"testing"
 )
 
@@ -68,7 +70,7 @@ func runResponseBodyArrayTypeConfigTest(responseBodyConfigValue []interface{},
 		t.Errorf("error in parsing json")
 	}
 
-	actual := processResponseConfigArrayType(responseBodyConfigValue, requestBodyJsonMap)
+	actual := service.processResponseConfigArrayType(responseBodyConfigValue, requestBodyJsonMap)
 
 	if len(expected) != len(actual) {
 		t.Errorf("expected array value %v type %T actual value %v type %T", expected, expected, actual, actual)
@@ -89,7 +91,7 @@ func runResponseBodyConfigTest(responseBodyConfigValue string, expected interfac
 	if err != nil {
 		t.Errorf("error in parsing json")
 	}
-	actual := getResponseBodyValueFromRequestBody(responseBodyConfigValue, requestBodyJsonMap)
+	actual := service.getResponseBodyValueFromRequestBody(responseBodyConfigValue, requestBodyJsonMap)
 
-	compareValues(expected, actual, t)
+	commons.compareValues(expected, actual, t)
 }

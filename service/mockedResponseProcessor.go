@@ -1,8 +1,9 @@
-package main
+package service
 
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/Mobikwik/morpheus/commons"
 	"github.com/Mobikwik/morpheus/model"
 	"log"
 	"strings"
@@ -22,7 +23,7 @@ func recoverConfigError2() string {
 	return "recover return"
 }
 */
-func doMocking(url, requestMethod string, requestBody []byte,
+func DoMocking(url, requestMethod string, requestBody []byte,
 	requestHeader map[string][]string) (string, map[string][]string) {
 
 	/*	// this function will be called in case of any "panic"
@@ -42,7 +43,7 @@ func doMocking(url, requestMethod string, requestBody []byte,
 		}
 		log.Println("parsed request body json is ", requestBodyJson)
 
-		matchingApiConfig := findMatchingApiConfig(url, requestMethod)
+		matchingApiConfig := commons.FindMatchingApiConfig(url, requestMethod)
 		if matchingApiConfig == nil {
 			log.Printf("no matching config found for this api request")
 			responseBody = "no matching config found for this api request"
