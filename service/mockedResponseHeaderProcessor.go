@@ -19,7 +19,7 @@ func setResponseHeaderMap(responseHeaderConfigJsonMap map[string]interface{}, re
 
 		switch responseConfigKeyValue := responseConfigKeyValueGenericType.(type) {
 		case string:
-			responseHeaderValueArr = getResponseHeaderConfigValueFromRequestHeader(responseConfigKeyValue, requestHeaderMap)
+			responseHeaderValueArr = GetResponseHeaderConfigValueFromRequestHeader(responseConfigKeyValue, requestHeaderMap)
 			log.Printf("setting single value %s for header %s", responseHeaderValueArr, headerName)
 		/*case []string:
 		for i, responseConfigKeyValueSingle := range responseConfigKeyValue {
@@ -33,7 +33,7 @@ func setResponseHeaderMap(responseHeaderConfigJsonMap map[string]interface{}, re
 				log.Printf("getting value for config %s", responseConfigKeyValueSingle)
 				responseConfigKeyValueSingleStr, ok := responseConfigKeyValueSingle.(string)
 				if ok {
-					responseHeaderValueArr = append(responseHeaderValueArr, getResponseHeaderConfigValueFromRequestHeader(responseConfigKeyValueSingleStr, requestHeaderMap)[0])
+					responseHeaderValueArr = append(responseHeaderValueArr, GetResponseHeaderConfigValueFromRequestHeader(responseConfigKeyValueSingleStr, requestHeaderMap)[0])
 					log.Printf("adding array value %s on index %d for header %s ", responseHeaderValueArr[i], i, headerName)
 				}
 
@@ -51,7 +51,7 @@ func setResponseHeaderMap(responseHeaderConfigJsonMap map[string]interface{}, re
 	return responseHeaderValuesJsonMap
 }
 
-func getResponseHeaderConfigValueFromRequestHeader(responseHeaderConfigValue string, requestHeaderMap map[string][]string) []string {
+func GetResponseHeaderConfigValueFromRequestHeader(responseHeaderConfigValue string, requestHeaderMap map[string][]string) []string {
 	log.Printf("inside getResponseHeaderConfigValueFromRequestHeader, getting value for response config %s", responseHeaderConfigValue)
 	if strings.HasPrefix(responseHeaderConfigValue, "requestHeaders.") {
 		responseHeaderConfigValueSplit := strings.Split(responseHeaderConfigValue, ".")

@@ -70,7 +70,7 @@ func runResponseBodyArrayTypeConfigTest(responseBodyConfigValue []interface{},
 		t.Errorf("error in parsing json")
 	}
 
-	actual := service.processResponseConfigArrayType(responseBodyConfigValue, requestBodyJsonMap)
+	actual := service.ProcessResponseConfigArrayType(responseBodyConfigValue, requestBodyJsonMap)
 
 	if len(expected) != len(actual) {
 		t.Errorf("expected array value %v type %T actual value %v type %T", expected, expected, actual, actual)
@@ -91,7 +91,7 @@ func runResponseBodyConfigTest(responseBodyConfigValue string, expected interfac
 	if err != nil {
 		t.Errorf("error in parsing json")
 	}
-	actual := service.getResponseBodyValueFromRequestBody(responseBodyConfigValue, requestBodyJsonMap)
+	actual := service.GetResponseBodyValueFromRequestBody(responseBodyConfigValue, requestBodyJsonMap)
 
-	commons.compareValues(expected, actual, t)
+	commons.CompareValues(expected, actual, t)
 }

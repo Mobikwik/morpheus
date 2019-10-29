@@ -17,7 +17,7 @@ func ReadFromRequestBody(body io.ReadCloser) []byte {
 	return []byte{}
 }
 
-func compareValues(expected interface{}, actual interface{}, t *testing.T) {
+func CompareValues(expected interface{}, actual interface{}, t *testing.T) {
 	switch expectedTypedValue := expected.(type) {
 
 	case []interface{}:
@@ -26,7 +26,7 @@ func compareValues(expected interface{}, actual interface{}, t *testing.T) {
 			t.Errorf("expected array value %v type %T actual value %v type %T", expectedTypedValue, expectedTypedValue, actualArrayTypeValue, actualArrayTypeValue)
 		}
 		for i, v := range expectedTypedValue {
-			compareValues(v, actualArrayTypeValue[i], t)
+			CompareValues(v, actualArrayTypeValue[i], t)
 		}
 
 	case []string:
@@ -35,7 +35,7 @@ func compareValues(expected interface{}, actual interface{}, t *testing.T) {
 			t.Errorf("expected array value %v type %T actual value %v type %T", expectedTypedValue, expectedTypedValue, actualArrayTypeValue, actualArrayTypeValue)
 		}
 		for i, v := range expectedTypedValue {
-			compareValues(v, actualArrayTypeValue[i], t)
+			CompareValues(v, actualArrayTypeValue[i], t)
 		}
 	case map[string]interface{}:
 
@@ -46,7 +46,7 @@ func compareValues(expected interface{}, actual interface{}, t *testing.T) {
 		}
 
 		for key, v := range expectedTypedValue {
-			compareValues(v, actualMapTypeValue[key], t)
+			CompareValues(v, actualMapTypeValue[key], t)
 		}
 
 	case interface{}:

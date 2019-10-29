@@ -86,7 +86,7 @@ func runResponseHeaderConfigTest(responseHeaderConfigValue string, expected inte
 		"X-Checksum":    {"hfsdhfbudgwq8gdqwudqu"},
 	}
 
-	actual := service.getResponseHeaderConfigValueFromRequestHeader(responseHeaderConfigValue, requestHeaderJsonMap)
+	actual := service.GetResponseHeaderConfigValueFromRequestHeader(responseHeaderConfigValue, requestHeaderJsonMap)
 
-	commons.compareValues(expected, actual, t)
+	commons.CompareValues(expected, actual, t)
 }
