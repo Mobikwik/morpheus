@@ -25,7 +25,7 @@ func main() {
 	dbConnectTimeoutInSeconds := p.GetInt("db.connect.timeout", 1)
 	bboltDB.OpenDBConnection(dbPath, dbConnectTimeoutInSeconds)
 
-	portNumber := p.MustGetInt("port")
+	portNumber := p.MustGetInt("webapp.port")
 	r := webHandlers.NewRouter()
 	err := http.ListenAndServe(":"+strconv.Itoa(portNumber), r)
 
