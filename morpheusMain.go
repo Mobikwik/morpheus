@@ -2,28 +2,32 @@ package main
 
 import (
 	"github.com/Mobikwik/morpheus/bboltDB"
+	"github.com/Mobikwik/morpheus/envConfig"
 	"github.com/Mobikwik/morpheus/webHandlers"
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 )
 
 func main() {
 	log.Print("entering mocking main")
 
-	if len(os.Args) != 3 {
-		panic("pass port number and db path as command line args")
+	if len(os.Args) != 2 {
+		panic("pass properties file path as command line args")
 	}
 
-	portNumber := os.Args[1]
-	//TODO take DB file path, timeout etc from env.properties file
-	dbPath := os.Args[2] //"/tmp/bboltDBDataFile/morpheus.db"
-	dbConnectTimeoutInSeconds := 1
+	propertyFilePath := os.Args[1]
 
+	p := envConfig.LoadProperties(propertyFilePath)
+
+	dbPath := p.MustGetString("db.path") //"/tmp/bboltDBDataFile/morpheus.db"
+	dbConnectTimeoutInSeconds := p.GetInt("db.connect.timeout", 1)
 	bboltDB.OpenDBConnection(dbPath, dbConnectTimeoutInSeconds)
 
+	portNumber := p.MustGetInt("port")
 	r := webHandlers.NewRouter()
-	err := http.ListenAndServe(":"+portNumber, r)
+	err := http.ListenAndServe(":"+strconv.Itoa(portNumber), r)
 
 	if nil != err {
 		log.Printf("error in running morpheus %v on port number %s", err, portNumber)
