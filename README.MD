@@ -21,3 +21,11 @@ git pre-commit hook is in file ".git/hooks/pre-commit". Modified to run "go fmt"
     
 This project uses BBoltDB:
     https://github.com/etcd-io/bbolt
+    
+Testing:
+    to run test, 
+        go test ./packageName
+    to check unit test coverage, run below: (https://medium.com/rungo/unit-testing-made-easy-in-go-25077669318)
+    go test -cover
+    go test -coverprofile=cover.txt
+    go tool cover -html=cover.txt -o cover.html

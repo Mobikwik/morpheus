@@ -3,6 +3,7 @@ package commons
 import (
 	"io"
 	"io/ioutil"
+	"reflect"
 	"testing"
 )
 
@@ -34,9 +35,10 @@ func CompareValues(expected interface{}, actual interface{}, t *testing.T) {
 		if len(expectedTypedValue) != len(actualArrayTypeValue) {
 			t.Errorf("expected array value %v type %T actual value %v type %T", expectedTypedValue, expectedTypedValue, actualArrayTypeValue, actualArrayTypeValue)
 		}
-		for i, v := range expectedTypedValue {
+		/*	for i, v := range expectedTypedValue {
 			CompareValues(v, actualArrayTypeValue[i], t)
-		}
+		}*/
+		reflect.DeepEqual(expectedTypedValue, actualArrayTypeValue)
 	case map[string]interface{}:
 
 		actualMapTypeValue := actual.(map[string]interface{})

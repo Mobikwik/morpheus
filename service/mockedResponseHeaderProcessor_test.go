@@ -1,8 +1,7 @@
-package main
+package service
 
 import (
-	"github.com/Mobikwik/morpheus/commons"
-	"github.com/Mobikwik/morpheus/service"
+	"reflect"
 	"testing"
 )
 
@@ -86,7 +85,12 @@ func runResponseHeaderConfigTest(responseHeaderConfigValue string, expected inte
 		"X-Checksum":    {"hfsdhfbudgwq8gdqwudqu"},
 	}
 
-	actual := service.GetResponseHeaderConfigValueFromRequestHeader(responseHeaderConfigValue, requestHeaderJsonMap)
+	actual := GetResponseHeaderConfigValueFromRequestHeader(responseHeaderConfigValue, requestHeaderJsonMap)
 
-	commons.CompareValues(expected, actual, t)
+	//commons.CompareValues(expected, actual, t)
+	isEqual:=reflect.DeepEqual(expected,actual)
+	if !isEqual {
+		t.Errorf("expected value %v type %T actual value %v type %T", expected, expected,
+			actual, actual)
+	}
 }
