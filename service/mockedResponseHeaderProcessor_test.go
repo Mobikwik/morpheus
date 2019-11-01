@@ -1,6 +1,7 @@
-package service
+package service_test
 
 import (
+	"github.com/Mobikwik/morpheus/service"
 	"reflect"
 	"testing"
 )
@@ -36,7 +37,7 @@ func TestResponseHeaderConfig_ForNestedEntireArrayFromRequestHeader(t *testing.T
 	runResponseHeaderConfigTest(responseHeaderConfigValue, expected, t)
 }
 
-// test pending for array type header config
+// TODO test pending for array type header config
 /*
 func TestResponseHeaderConfig_ForNestedMultipleArrayValueFromRequestHeader(t *testing.T)  {
 	responseHeaderConfigValue:= []interface{} {
@@ -85,10 +86,9 @@ func runResponseHeaderConfigTest(responseHeaderConfigValue string, expected inte
 		"X-Checksum":    {"hfsdhfbudgwq8gdqwudqu"},
 	}
 
-	actual := GetResponseHeaderConfigValueFromRequestHeader(responseHeaderConfigValue, requestHeaderJsonMap)
+	actual := service.GetResponseHeaderConfigValueFromRequestHeader(responseHeaderConfigValue, requestHeaderJsonMap)
 
-	//commons.CompareValues(expected, actual, t)
-	isEqual:=reflect.DeepEqual(expected,actual)
+	isEqual := reflect.DeepEqual(expected, actual)
 	if !isEqual {
 		t.Errorf("expected value %v type %T actual value %v type %T", expected, expected,
 			actual, actual)

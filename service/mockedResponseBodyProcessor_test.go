@@ -1,7 +1,8 @@
-package service
+package service_test
 
 import (
 	"encoding/json"
+	"github.com/Mobikwik/morpheus/service"
 	"reflect"
 	"testing"
 )
@@ -69,22 +70,22 @@ func runResponseBodyArrayTypeConfigTest(responseBodyConfigValue []interface{},
 		t.Errorf("error in parsing json")
 	}
 
-	actual := ProcessResponseConfigArrayType(responseBodyConfigValue, requestBodyJsonMap)
+	actual := service.ProcessResponseConfigArrayType(responseBodyConfigValue, requestBodyJsonMap)
 
-	isEqual:=reflect.DeepEqual(expected,actual)
+	isEqual := reflect.DeepEqual(expected, actual)
 	if !isEqual {
 		t.Errorf("expected value %v type %T actual value %v type %T", expected, expected,
 			actual, actual)
 	}
 
-/*	if len(expected) != len(actual) {
-		t.Errorf("expected array value %v type %T actual value %v type %T", expected, expected, actual, actual)
-	}
-	for i, v := range expected {
-		if v != actual[i] {
-			t.Errorf("expected array type value %v type %T actual value %v type %T", v, v, actual[i], actual[i])
+	/*	if len(expected) != len(actual) {
+			t.Errorf("expected array value %v type %T actual value %v type %T", expected, expected, actual, actual)
 		}
-	}*/
+		for i, v := range expected {
+			if v != actual[i] {
+				t.Errorf("expected array type value %v type %T actual value %v type %T", v, v, actual[i], actual[i])
+			}
+		}*/
 }
 
 func runResponseBodyConfigTest(responseBodyConfigValue string, expected interface{},
@@ -96,10 +97,10 @@ func runResponseBodyConfigTest(responseBodyConfigValue string, expected interfac
 	if err != nil {
 		t.Errorf("error in parsing json")
 	}
-	actual := GetResponseBodyValueFromRequestBody(responseBodyConfigValue, requestBodyJsonMap)
+	actual := service.GetResponseBodyValueFromRequestBody(responseBodyConfigValue, requestBodyJsonMap)
 
 	//commons.CompareValues(expected, actual, t)
-	isEqual:=reflect.DeepEqual(expected,actual)
+	isEqual := reflect.DeepEqual(expected, actual)
 	if !isEqual {
 		t.Errorf("expected value %v type %T actual value %v type %T", expected, expected,
 			actual, actual)

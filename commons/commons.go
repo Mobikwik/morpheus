@@ -3,8 +3,6 @@ package commons
 import (
 	"io"
 	"io/ioutil"
-	"reflect"
-	"testing"
 )
 
 func ReadFromRequestBody(body io.ReadCloser) []byte {
@@ -18,6 +16,7 @@ func ReadFromRequestBody(body io.ReadCloser) []byte {
 	return []byte{}
 }
 
+/*
 func CompareValues(expected interface{}, actual interface{}, t *testing.T) {
 	switch expectedTypedValue := expected.(type) {
 
@@ -35,10 +34,9 @@ func CompareValues(expected interface{}, actual interface{}, t *testing.T) {
 		if len(expectedTypedValue) != len(actualArrayTypeValue) {
 			t.Errorf("expected array value %v type %T actual value %v type %T", expectedTypedValue, expectedTypedValue, actualArrayTypeValue, actualArrayTypeValue)
 		}
-		/*	for i, v := range expectedTypedValue {
+		for i, v := range expectedTypedValue {
 			CompareValues(v, actualArrayTypeValue[i], t)
-		}*/
-		reflect.DeepEqual(expectedTypedValue, actualArrayTypeValue)
+		}
 	case map[string]interface{}:
 
 		actualMapTypeValue := actual.(map[string]interface{})
@@ -58,4 +56,4 @@ func CompareValues(expected interface{}, actual interface{}, t *testing.T) {
 	default:
 		t.Errorf("unexpected type passed %T", expectedTypedValue)
 	}
-}
+}*/

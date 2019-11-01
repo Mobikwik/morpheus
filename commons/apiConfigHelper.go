@@ -8,7 +8,6 @@ import (
 )
 
 func FindMatchingApiConfig(urlToSearch, requestMethod string) *model.ApiConfig {
-	//var matchingApiConfig *ApiConfig
 
 	log.Printf("inside findMatchingApiConfig to find matching config for url %s requestMethod %s", urlToSearch, requestMethod)
 
@@ -20,18 +19,7 @@ func FindMatchingApiConfig(urlToSearch, requestMethod string) *model.ApiConfig {
 		log.Print("matching api config found with Id ", apiConfigJson.Id)
 		return &apiConfigJson
 	}
-	/*	var apiConfigArr = getApiConfigArray()
-		if apiConfigArr != nil {
-			for _, apiConfig := range apiConfigArr {
-				if strings.EqualFold(apiConfig.Url, urlToSearch) && strings.EqualFold(apiConfig.Method, requestMethod) {
-					log.Print("matching api config found with Id ", apiConfig.Id)
-					return &apiConfig
-				}
-			}
-		}*/
-
 	log.Print("exiting findMatchingApiConfig")
-
 	return nil
 }
 

@@ -24,8 +24,8 @@ This project uses BBoltDB:
     
 Testing:
     to run test, 
-        go test ./packageName
+        go test ./...
     to check unit test coverage, run below: (https://medium.com/rungo/unit-testing-made-easy-in-go-25077669318)
-    go test -cover
-    go test -coverprofile=cover.txt
+    go test ./... -cover
+    go test ./... -coverprofile=cover.txt
     go tool cover -html=cover.txt -o cover.html
