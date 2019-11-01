@@ -1,5 +1,5 @@
 running application from command line, skipping test files:
-    go run $(ls -t | grep -v _test | grep .go) 8080
+    go run $(ls -t | grep -v _test | grep .go) env.properties
 
 GoLang project Directory structure:
     https://medium.com/golang-learn/go-project-layout-e5213cdcfaa2
@@ -21,6 +21,9 @@ git pre-commit hook is in file ".git/hooks/pre-commit". Modified to run "go fmt"
     
 This project uses BBoltDB:
     https://github.com/etcd-io/bbolt
+    
+Reading from properties file:
+    https://github.com/magiconair/properties
     
 Testing:
     to run test, 

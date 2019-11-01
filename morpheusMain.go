@@ -30,7 +30,7 @@ func main() {
 	err := http.ListenAndServe(":"+strconv.Itoa(portNumber), r)
 
 	if nil != err {
-		log.Printf("error in running morpheus %v on port number %s", err, portNumber)
+		log.Printf("error in running morpheus %v on port number %v", err, portNumber)
 	}
 	defer bboltDB.CloseDBConnection()
 	log.Print("exiting mocking main")
