@@ -11,14 +11,13 @@ var (
 	err              error
 )
 
-func OpenDBConnection() {
+func OpenDBConnection(dbPath string, dbConnectTimeoutInSeconds int) {
 
 	if nil != boltDBConnection {
 		return
 	}
-	//TODO take DB file path, timeout etc from env.properties file
-	boltDBConnection, err = bbolt.Open("bboltDBDataFile/morpheus.db", 0600,
-		&bbolt.Options{Timeout: 1 * time.Second})
+	boltDBConnection, err = bbolt.Open(dbPath, 0600,
+		&bbolt.Options{Timeout: time.Duration(dbConnectTimeoutInSeconds) * time.Second})
 	if err != nil {
 		log.Print(err)
 		panic(err)
