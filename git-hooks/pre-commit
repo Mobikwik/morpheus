@@ -18,8 +18,7 @@ unformatted=$(gofmt -l $gofiles)
 echo >&2 "Inside file .git/hooks/pre-commit.Go files must be formatted with gofmt. Please run:"
 for fn in $unformatted; do
 	echo >&2 "  gofmt -w $PWD/$fn"
-	echo "formatting file $PWD/$fn using go fmt"
-    gofmt -w $PWD/$fn
+	 #echo "formatting file $PWD/$fn using go fmt"
+	 #gofmt -w $PWD/$fn
 done
-echo "run git commit -am again"
 exit 1

@@ -16,8 +16,11 @@ JSON Parsing:
 error handling:
     https://golangbot.com/panic-and-recover/
     
-git pre-commit hook is in file ".git/hooks/pre-commit". Modified to run "go fmt" automatically before every commit
+git pre-commit hook is in file ".git/hooks/pre-commit",to enforce only formatted code using "go fmt" is committed:
     https://go.googlesource.com/go/+/dev.tls/misc/git/pre-commit
+    
+Run "go fmt" after every change automatically in GoLand:
+    https://www.jetbrains.com/help/go/using-file-watchers.html
     
 This project uses BBoltDB:
     https://github.com/etcd-io/bbolt
