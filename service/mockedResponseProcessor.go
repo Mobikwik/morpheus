@@ -2,11 +2,9 @@ package service
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/Mobikwik/morpheus/commons"
 	"github.com/Mobikwik/morpheus/model"
 	"log"
-	"strings"
 	"time"
 )
 
@@ -34,36 +32,37 @@ func DoMocking(url, requestMethod string, requestBody []byte,
 
 	log.Printf("entering doMocking with url %s method %s body %s", url, requestMethod, requestBody)
 
-	if requestHeader[ContentTypeHeaderName] != nil &&
-		strings.Contains(requestHeader[ContentTypeHeaderName][0], ContentTypeHeaderValueJson) {
-		var requestBodyJson map[string]interface{}
-		err := json.Unmarshal(requestBody, &requestBodyJson)
-		if err != nil {
-			panic(err)
-		}
-		log.Println("parsed request body json is ", requestBodyJson)
+	// remove the content-type header check
+	/*if requestHeader[ContentTypeHeaderName] != nil &&
+	strings.Contains(requestHeader[ContentTypeHeaderName][0], ContentTypeHeaderValueJson) {*/
+	var requestBodyJson map[string]interface{}
+	err := json.Unmarshal(requestBody, &requestBodyJson)
+	if err != nil {
+		panic(err)
+	}
+	log.Println("parsed request body json is ", requestBodyJson)
 
-		matchingApiConfig := commons.FindMatchingApiConfig(url, requestMethod)
-		if matchingApiConfig == nil {
-			log.Printf("no matching config found for this api request")
-			responseBody = "no matching config found for this api request"
-		} else {
-			log.Printf("found matching api config with id %v value %v", matchingApiConfig.Id, matchingApiConfig)
-			responseBody, responseHeaders := getMockedResponse(matchingApiConfig, requestBodyJson, requestHeader)
-
-			// check if api config has any setting for introducing delay in sending response. This is to test api timeouts
-			if matchingApiConfig.ResponseDelayInSeconds > 0 {
-				// time.Duration by default is in nanoseconds, converting it in seconds
-				var responseDelay = time.Duration(matchingApiConfig.ResponseDelayInSeconds) * time.Second
-				log.Printf("introducing response delay of %s seconds", responseDelay)
-				time.Sleep(responseDelay)
-			}
-			return responseBody, responseHeaders, matchingApiConfig.ResponseConfig.HttpCode
-		}
+	matchingApiConfig := commons.FindMatchingApiConfig(url, requestMethod)
+	if matchingApiConfig == nil {
+		log.Printf("no matching config found for this api request")
+		responseBody = "no matching config found for this api request"
 	} else {
+		log.Printf("found matching api config with id %v value %v", matchingApiConfig.Id, matchingApiConfig)
+		responseBody, responseHeaders := getMockedResponse(matchingApiConfig, requestBodyJson, requestHeader)
+
+		// check if api config has any setting for introducing delay in sending response. This is to test api timeouts
+		if matchingApiConfig.ResponseDelayInSeconds > 0 {
+			// time.Duration by default is in nanoseconds, converting it in seconds
+			var responseDelay = time.Duration(matchingApiConfig.ResponseDelayInSeconds) * time.Second
+			log.Printf("introducing response delay of %s seconds", responseDelay)
+			time.Sleep(responseDelay)
+		}
+		return responseBody, responseHeaders, matchingApiConfig.ResponseConfig.HttpCode
+	}
+	/*} else {
 		log.Print("invalid Content-Type header", requestHeader[ContentTypeHeaderName])
 		responseBody = fmt.Sprintf("%s %v", "invalid Content-Type header", requestHeader[ContentTypeHeaderName])
-	}
+	}*/
 	return responseBody, responseHeaders, 200
 }
 

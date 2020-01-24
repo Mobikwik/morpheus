@@ -7,7 +7,7 @@ import (
 	"log"
 )
 
-func UpdateApiConfigInDB(bucketName, key string, apiConfig model.ApiConfig) uint64 {
+func UpdateApiConfigInDB(bucketName, key string, apiConfigObj model.ApiConfig) uint64 {
 
 	log.Print("storing api config for key ", key)
 
@@ -16,8 +16,8 @@ func UpdateApiConfigInDB(bucketName, key string, apiConfig model.ApiConfig) uint
 		// bucket must be created/opened in same tx, hence passing tx in createBucket
 		bucket := createBucket(bucketName, tx)
 		id, _ = bucket.NextSequence()
-		apiConfig.Id = id
-		apiConfig, err := json.Marshal(&apiConfig)
+		apiConfigObj.Id = id
+		apiConfig, err := json.Marshal(&apiConfigObj)
 		if nil != err {
 			log.Printf("error occured while updating DB %v", err)
 			panic(err)
