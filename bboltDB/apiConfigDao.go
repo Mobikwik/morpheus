@@ -12,12 +12,29 @@ func UpdateApiConfigInDB(bucketName, key string, apiConfigObj model.ApiConfig) u
 	log.Print("storing api config for key ", key)
 
 	var id uint64
+	var newApiConfigArr []model.ApiConfig
 	err := boltDBConnection.Update(func(tx *bbolt.Tx) error {
+
+		existingApiConfigJson, _ := ReadSingleKeyFromDB(bucketName, key)
+
+		if len(existingApiConfigJson) > 0 {
+			var existingApiConfigArr []model.ApiConfig
+			json.Unmarshal([]byte(existingApiConfigJson), &existingApiConfigArr)
+			arrLen := len(existingApiConfigArr)
+
+			newApiConfigArr = make([]model.ApiConfig, arrLen+1)
+			newApiConfigArr = existingApiConfigArr[0:arrLen]
+			// add new value in arr
+			newApiConfigArr[arrLen+1] = apiConfigObj
+
+		} else {
+			newApiConfigArr = []model.ApiConfig{apiConfigObj}
+		}
 		// bucket must be created/opened in same tx, hence passing tx in createBucket
 		bucket := createBucket(bucketName, tx)
 		id, _ = bucket.NextSequence()
 		apiConfigObj.Id = id
-		apiConfig, err := json.Marshal(&apiConfigObj)
+		apiConfig, err := json.Marshal(&newApiConfigArr)
 		if nil != err {
 			log.Printf("error occured while updating DB %v", err)
 			panic(err)
