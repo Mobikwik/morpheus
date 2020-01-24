@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"log"
 	"strconv"
 	"strings"
@@ -34,7 +33,8 @@ func setResponseBodyMap(responseBodyConfigJsonMap map[string]interface{}, reques
 			// when the value is map type(nested json object), do recursive call
 			setResponseBodyMap(responseBodyConfigValue, requestBodyJsonMap)
 		default:
-			fmt.Printf("no processing needed for response body config %v type %T", responseBodyConfigValueGenericType,
+			log.Printf("no processing needed for key %s response body config %v type %T", key,
+				responseBodyConfigValueGenericType,
 				responseBodyConfigValueGenericType)
 		}
 	}

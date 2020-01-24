@@ -38,12 +38,19 @@ func mockingRequestHandler(w http.ResponseWriter, r *http.Request) {
 
 		log.Printf("api to mock is %s request method is %s", url, r.Method)
 
-		var responseBody, responseHeaders = service.DoMocking(url, r.Method, bodyBytes, r.Header)
+		var responseBody, responseHeaders, responseHttpCode = service.DoMocking(url, r.Method, bodyBytes, r.Header)
 
-		log.Printf("final mocked response \n body: %s \n headers: %s", responseBody, responseHeaders)
+		log.Printf("final mocked response \n body: %s \n headers: %s \n http response code: %v",
+			responseBody, responseHeaders, responseHttpCode)
 
 		for headerName, headerValue := range responseHeaders {
 			w.Header()[headerName] = headerValue
+		}
+
+		// set response http code as mentioned in api config
+		if 200 != responseHttpCode {
+			w.WriteHeader(responseHttpCode)
+			log.Printf("set http response code to %v", responseHttpCode)
 		}
 		// send final api response
 		fmt.Fprintf(w, "%v", responseBody)

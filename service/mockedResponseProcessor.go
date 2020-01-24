@@ -24,7 +24,7 @@ func recoverConfigError2() string {
 }
 */
 func DoMocking(url, requestMethod string, requestBody []byte,
-	requestHeader map[string][]string) (string, map[string][]string) {
+	requestHeader map[string][]string) (string, map[string][]string, int) {
 
 	/*	// this function will be called in case of any "panic"
 		defer recoverConfigError2()*/
@@ -58,13 +58,13 @@ func DoMocking(url, requestMethod string, requestBody []byte,
 				log.Printf("introducing response delay of %s seconds", responseDelay)
 				time.Sleep(responseDelay)
 			}
-			return responseBody, responseHeaders
+			return responseBody, responseHeaders, matchingApiConfig.ResponseConfig.HttpCode
 		}
 	} else {
 		log.Print("invalid Content-Type header", requestHeader[ContentTypeHeaderName])
 		responseBody = fmt.Sprintf("%s %v", "invalid Content-Type header", requestHeader[ContentTypeHeaderName])
 	}
-	return responseBody, responseHeaders
+	return responseBody, responseHeaders, 200
 }
 
 func getMockedResponse(apiConfig *model.ApiConfig, requestBodyJsonMap map[string]interface{},
