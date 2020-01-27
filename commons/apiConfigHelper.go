@@ -5,28 +5,39 @@ import (
 	"github.com/Mobikwik/morpheus/bboltDB"
 	"github.com/Mobikwik/morpheus/model"
 	"log"
+	"reflect"
 )
 
-func FindMatchingApiConfig(urlToSearch string) *model.ApiConfig {
+func FindMatchingApiConfig(urlToSearch string, requestHeader map[string][]string,
+	requestBodyMap map[string]interface{}) *model.ApiConfig {
 
 	log.Printf("inside findMatchingApiConfig to find matching config for url %s", urlToSearch)
 
-	apiKey := makeApiConfigKey(urlToSearch)
-	apiJsonFromDB := ReadSingleApiConfigFromDB(apiKey)
+	apiJsonFromDB := ReadSingleApiConfigFromDB(urlToSearch)
 	if len(apiJsonFromDB) > 0 {
 		//TODO fetch matching request config from array of ApiConfig
-		var apiConfigJson model.ApiConfig
-		json.Unmarshal([]byte(apiJsonFromDB), &apiConfigJson)
-		log.Print("matching api config found with Id ", apiConfigJson.Id)
-		return &apiConfigJson
+		var apiConfigArray []model.ApiConfig
+		json.Unmarshal([]byte(apiJsonFromDB), &apiConfigArray)
+		var apiConfig model.ApiConfig
+		for _, apiConfig = range apiConfigArray {
+			//configRequestHeader := apiConfig.RequestConfig.RequestHeaders
+			configRequestBody := apiConfig.RequestConfig.RequestJsonBody
+			//check if request body values matches with one of the config values
+			if reflect.DeepEqual(configRequestBody, requestBodyMap) {
+				return &apiConfig
+				/*	 if request body matches, check for request header values. Actual request might contain extra headers,
+				so we check if headers present in config exists in actual request(requestHeader)
+				 so requestHeader must contain configRequestHeader
+				if isSubMap(configRequestHeader, requestHeader) {
+					log.Printf("found matching api config with id %v value %v", apiConfig.Id, apiConfig)
+					return &apiConfig
+				}*/
+			}
+		}
 	}
-	log.Print("exiting findMatchingApiConfig")
 	return nil
 }
 
-func makeApiConfigKey(urlToSearch string) string {
-	return urlToSearch
-}
 func StoreApiConfigInDB(requestBodyJsonString, apiKey string) uint64 {
 	var apiConfigJson model.ApiConfig
 	json.Unmarshal([]byte(requestBodyJsonString), &apiConfigJson)
