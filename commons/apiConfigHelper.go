@@ -7,13 +7,14 @@ import (
 	"log"
 )
 
-func FindMatchingApiConfig(urlToSearch, requestMethod string) *model.ApiConfig {
+func FindMatchingApiConfig(urlToSearch string) *model.ApiConfig {
 
-	log.Printf("inside findMatchingApiConfig to find matching config for url %s requestMethod %s", urlToSearch, requestMethod)
+	log.Printf("inside findMatchingApiConfig to find matching config for url %s", urlToSearch)
 
-	apiKey := makeApiConfigKey(urlToSearch, requestMethod)
+	apiKey := makeApiConfigKey(urlToSearch)
 	apiJsonFromDB := ReadSingleApiConfigFromDB(apiKey)
 	if len(apiJsonFromDB) > 0 {
+		//TODO fetch matching request config from array of ApiConfig
 		var apiConfigJson model.ApiConfig
 		json.Unmarshal([]byte(apiJsonFromDB), &apiConfigJson)
 		log.Print("matching api config found with Id ", apiConfigJson.Id)
@@ -23,8 +24,8 @@ func FindMatchingApiConfig(urlToSearch, requestMethod string) *model.ApiConfig {
 	return nil
 }
 
-func makeApiConfigKey(urlToSearch, requestMethod string) string {
-	return urlToSearch + "~" + requestMethod
+func makeApiConfigKey(urlToSearch string) string {
+	return urlToSearch
 }
 func StoreApiConfigInDB(requestBodyJsonString, apiKey string) uint64 {
 	var apiConfigJson model.ApiConfig

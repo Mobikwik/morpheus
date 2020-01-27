@@ -4,7 +4,7 @@ curl -X POST -i http://localhost:8080/apiConfig --data '{ "url": "/api/p/wallet/
 
 # test in parallel
 
-seq 1 1000 | xargs -n1 -P1000   curl -X GET  -i 'http://localhost:8080/apiConfig?apiUrl=/api/p/wallet/debit9&requestMethod=POST' > abc.txt
+seq 1 1000 | xargs -n1 -P1000   curl -X GET  -i 'http://localhost:8080/apiConfig?apiUrl=/api/p/wallet/debit88' > abc.txt
 
 
-curl -X GET  -i 'mbkrech-staging.southindia.cloudapp.azure.com:8081/apiConfig?apiUrl=/api/p/wallet/debit9&requestMethod=POST'
+curl -X GET  -i 'mbkrech-staging.southindia.cloudapp.azure.com:8081/apiConfig?apiUrl=/api/p/wallet/debit9'

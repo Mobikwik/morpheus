@@ -17,23 +17,30 @@ func UpdateApiConfigInDB(bucketName, key string, apiConfigObj model.ApiConfig) u
 
 		existingApiConfigJson, _ := ReadSingleKeyFromDB(bucketName, key)
 
-		if len(existingApiConfigJson) > 0 {
-			var existingApiConfigArr []model.ApiConfig
-			json.Unmarshal([]byte(existingApiConfigJson), &existingApiConfigArr)
-			arrLen := len(existingApiConfigArr)
-
-			newApiConfigArr = make([]model.ApiConfig, arrLen+1)
-			newApiConfigArr = existingApiConfigArr[0:arrLen]
-			// add new value in arr
-			newApiConfigArr[arrLen+1] = apiConfigObj
-
-		} else {
-			newApiConfigArr = []model.ApiConfig{apiConfigObj}
-		}
 		// bucket must be created/opened in same tx, hence passing tx in createBucket
 		bucket := createBucket(bucketName, tx)
 		id, _ = bucket.NextSequence()
 		apiConfigObj.Id = id
+
+		if len(existingApiConfigJson) > 0 {
+			var existingApiConfigArr []model.ApiConfig
+			err1 := json.Unmarshal([]byte(existingApiConfigJson), &existingApiConfigArr)
+			if nil != err1 {
+				log.Printf("error occured while updating DB %v", err1)
+				return err
+			}
+			arrLen := len(existingApiConfigArr)
+			newApiConfigArr = make([]model.ApiConfig, arrLen+1)
+			// copy old array in new
+			for i, v := range existingApiConfigArr {
+				newApiConfigArr[i] = v
+			}
+			// add new value in new array
+			newApiConfigArr[arrLen] = apiConfigObj
+
+		} else {
+			newApiConfigArr = []model.ApiConfig{apiConfigObj}
+		}
 		apiConfig, err := json.Marshal(&newApiConfigArr)
 		if nil != err {
 			log.Printf("error occured while updating DB %v", err)

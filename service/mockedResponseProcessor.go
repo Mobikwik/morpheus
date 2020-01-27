@@ -42,7 +42,7 @@ func DoMocking(url, requestMethod string, requestBody []byte,
 	}
 	log.Println("parsed request body json is ", requestBodyJson)
 
-	matchingApiConfig := commons.FindMatchingApiConfig(url, requestMethod)
+	matchingApiConfig := commons.FindMatchingApiConfig(url)
 	if matchingApiConfig == nil {
 		log.Printf("no matching config found for this api request")
 		responseBody = "no matching config found for this api request"
