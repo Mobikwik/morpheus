@@ -10,7 +10,6 @@ import (
 func TestResponseBodyConfig_ForSimpleValueFromRequestBody(t *testing.T) {
 	responseBodyConfigValue := "simpleValue"
 	expected := "simpleValue"
-
 	runResponseBodyConfigTest(responseBodyConfigValue, expected, t)
 }
 
@@ -50,8 +49,41 @@ func TestResponseBodyConfig_ForNestedMultipleArrayValueFromRequestBody(t *testin
 		"requestJsonBody.txnDetails.txnTypes[3]",
 	}
 	expected := []interface{}{"2", "3"}
-
 	runResponseBodyArrayTypeConfigTest(responseBodyConfigValue, expected, t)
+
+	var parsedJson []interface{}
+
+	jsonS := `["a", "2", "3c"]`
+	json.Unmarshal([]byte(jsonS), &parsedJson)
+	runResponseBodyArrayTypeConfigTest(parsedJson, parsedJson, t)
+
+	jsonS = `[1, 2, 3]`
+	json.Unmarshal([]byte(jsonS), &parsedJson)
+	runResponseBodyArrayTypeConfigTest(parsedJson, parsedJson, t)
+
+	jsonS = `["1", 2, "3c"]`
+	json.Unmarshal([]byte(jsonS), &parsedJson)
+	runResponseBodyArrayTypeConfigTest(parsedJson, parsedJson, t)
+
+	jsonS = ` [
+
+		{
+			"orderId": "abc123",
+			"amount": 23
+		},
+		{
+			"orderId": "xyz456",
+			"amount": 45
+		},
+		{
+			"orderId": "jdfj4546",
+			"amount": 789
+		}
+
+	] `
+
+	json.Unmarshal([]byte(jsonS), &parsedJson)
+	runResponseBodyArrayTypeConfigTest(parsedJson, parsedJson, t)
 }
 
 func TestResponseBodyConfig_ForNestedEntireArrayFromRequestBody(t *testing.T) {
