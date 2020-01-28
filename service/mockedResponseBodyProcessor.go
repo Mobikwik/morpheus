@@ -60,13 +60,6 @@ func GetResponseBodyValueFromRequestBody(responseBodyConfigValue string, request
 
 		responseBodyConfigValueSplit := strings.Split(responseBodyConfigValue, ".")
 
-		// return nil for invalid config value "requestJsonBody."
-		if len(responseBodyConfigValueSplit) < 2 {
-			//TODO throw error
-			log.Print("invalid response body configuration ", responseBodyConfigValue)
-			return nil
-		}
-
 		// temp variables to hold values fetched from requestBodyJsonMap.
 		// Declaring here because these can't be declared inside below for loop as they need to hold values of previous iteration
 		var requestBodyValueMapOfInterfaceType map[string]interface{}
@@ -116,6 +109,7 @@ func GetResponseBodyValueFromRequestBody(responseBodyConfigValue string, request
 					arrIndexInt, err := strconv.Atoi(arrIndex) // convert string "2" to int
 					if err != nil {
 						log.Printf("error parsing string to int for invalid config %s %v", responseBodyConfigValue, err)
+						//panic(err)
 						return nil // invalid config
 					}
 					var interfaceArrayTypeValue []interface{}

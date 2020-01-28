@@ -30,6 +30,19 @@ func TestResponseBodyConfig_ForNestedSingleArrayValueFromRequestBody(t *testing.
 	runResponseBodyConfigTest(responseBodyConfigValue, expected, t)
 }
 
+func TestResponseBodyConfig_ForNestedSingleArrayValueFromRequestBodyForInvalidConfigs(t *testing.T) {
+
+	// Invalid array index
+	responseBodyConfigValue := "requestJsonBody.txnDetails.txnTypes[a]"
+	var expected interface{} = nil
+	runResponseBodyConfigTest(responseBodyConfigValue, expected, t)
+
+	// Invalid nested config
+	responseBodyConfigValue = "requestJsonBody."
+	expected = nil
+	runResponseBodyConfigTest(responseBodyConfigValue, expected, t)
+}
+
 func TestResponseBodyConfig_ForNestedMultipleArrayValueFromRequestBody(t *testing.T) {
 
 	responseBodyConfigValue := []interface{}{
