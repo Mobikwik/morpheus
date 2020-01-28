@@ -156,10 +156,10 @@ func parseApiConfig(apiConfigJson string) []ApiConfig {
 func apiConfigWebGetHandler(w http.ResponseWriter, r *http.Request) {
 	log.Print("inside apiConfigWebGetHandler")
 	queryStringValues := r.URL.Query()
-	apiKey := ""
-	if len(queryStringValues) >= 2 {
+	var apiKey string
+	if len(queryStringValues) >= 1 {
 		// get values of query string params
-		apiKey = queryStringValues["apiUrl"][0] + "~" + queryStringValues["requestMethod"][0]
+		apiKey = queryStringValues["apiUrl"][0]
 	}
 	// fetch all configs
 	if len(apiKey) == 0 {
@@ -186,7 +186,7 @@ func apiConfigWebPostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Println("parsed request body json for new api config is ", requestBodyJsonString)
 
-	apiKey := newApiConfig.Url + "~" + newApiConfig.Method
+	apiKey := newApiConfig.Url
 	id := commons.StoreApiConfigInDB(requestBodyJsonString, apiKey)
 	fmt.Fprintf(w, "%v %d", "api config stored in DB with id ", id)
 

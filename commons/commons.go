@@ -3,6 +3,8 @@ package commons
 import (
 	"io"
 	"io/ioutil"
+	"net/http"
+	"reflect"
 )
 
 func ReadFromRequestBody(body io.ReadCloser) []byte {
@@ -57,3 +59,13 @@ func CompareValues(expected interface{}, actual interface{}, t *testing.T) {
 		t.Errorf("unexpected type passed %T", expectedTypedValue)
 	}
 }*/
+
+func isSubMap(subMap map[string]interface{}, mainMap map[string][]string) bool {
+	for configKey, configValue := range subMap {
+		configKey := http.CanonicalHeaderKey(configKey)
+		if !reflect.DeepEqual(configValue, mainMap[configKey]) {
+			return false
+		}
+	}
+	return true
+}

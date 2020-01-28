@@ -8,7 +8,6 @@ import (
 
 var (
 	boltDBConnection *bbolt.DB
-	err              error
 )
 
 func OpenDBConnection(dbPath string, dbConnectTimeoutInSeconds int) {
@@ -16,6 +15,7 @@ func OpenDBConnection(dbPath string, dbConnectTimeoutInSeconds int) {
 	if nil != boltDBConnection {
 		return
 	}
+	var err error
 	boltDBConnection, err = bbolt.Open(dbPath, 0600,
 		&bbolt.Options{Timeout: time.Duration(dbConnectTimeoutInSeconds) * time.Second})
 	if err != nil {
@@ -27,10 +27,10 @@ func OpenDBConnection(dbPath string, dbConnectTimeoutInSeconds int) {
 }
 
 func createBucket(bucketName string, tx *bbolt.Tx) *bbolt.Bucket {
-	var errInner error
-	bucket, errInner := tx.CreateBucketIfNotExists([]byte(bucketName))
-	if errInner != nil {
-		panic(errInner)
+	var err error
+	bucket, err := tx.CreateBucketIfNotExists([]byte(bucketName))
+	if err != nil {
+		panic(err)
 	}
 	return bucket
 }

@@ -51,8 +51,10 @@ func setResponseHeaderMap(responseHeaderConfigJsonMap map[string]interface{}, re
 	return responseHeaderValuesJsonMap
 }
 
-func GetResponseHeaderConfigValueFromRequestHeader(responseHeaderConfigValue string, requestHeaderMap map[string][]string) []string {
-	log.Printf("inside getResponseHeaderConfigValueFromRequestHeader, getting value for response config %s", responseHeaderConfigValue)
+func GetResponseHeaderConfigValueFromRequestHeader(responseHeaderConfigValue string,
+	requestHeaderMap map[string][]string) []string {
+	log.Printf("inside getResponseHeaderConfigValueFromRequestHeader, getting value for response config %s",
+		responseHeaderConfigValue)
 	if strings.HasPrefix(responseHeaderConfigValue, "requestHeaders.") {
 		responseHeaderConfigValueSplit := strings.Split(responseHeaderConfigValue, ".")
 
