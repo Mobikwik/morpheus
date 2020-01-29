@@ -33,6 +33,8 @@ func DoMocking(url, requestMethod string, requestBody []byte,
 	log.Printf("entering doMocking with url %s method %s request header %v request body %s",
 		url, requestMethod, requestHeader, requestBody)
 
+	//TODO put a check on request method. A POST api should give error if called via GET
+
 	// remove the content-type header check
 	/*if requestHeader[ContentTypeHeaderName] != nil &&
 	strings.Contains(requestHeader[ContentTypeHeaderName][0], ContentTypeHeaderValueJson) {*/
@@ -57,7 +59,7 @@ func DoMocking(url, requestMethod string, requestBody []byte,
 			log.Printf("introducing response delay of %s seconds", responseDelay)
 			time.Sleep(responseDelay)
 		}
-		return responseBody, responseHeaders, matchingApiConfig.ResponseConfig.HttpCode
+		return responseBody, responseHeaders, matchingApiConfig.ResponseMockValues.HttpCode
 	}
 	/*} else {
 		log.Print("invalid Content-Type header", requestHeader[ContentTypeHeaderName])
@@ -72,7 +74,7 @@ func getMockedResponse(apiConfig *model.ApiConfig, requestBodyJsonMap map[string
 	var responseBody string
 	var responseHeaders map[string][]string
 
-	responseBodyConfigJsonMap := apiConfig.ResponseConfig.ResponseJsonBody
+	responseBodyConfigJsonMap := apiConfig.ResponseMockValues.ResponseBodyMockValues
 	// set the values in response json map based on response config
 	setResponseBodyMap(responseBodyConfigJsonMap, requestBodyJsonMap)
 	responseBodyBytes, err := json.Marshal(responseBodyConfigJsonMap)
@@ -80,7 +82,7 @@ func getMockedResponse(apiConfig *model.ApiConfig, requestBodyJsonMap map[string
 		responseBody = string(responseBodyBytes)
 	}
 	// set response headers
-	responseHeaderConfigJsonMap := apiConfig.ResponseConfig.ResponseHeaders
+	responseHeaderConfigJsonMap := apiConfig.ResponseMockValues.ResponseHeadersMockValues
 	// set the values in response json map based on response config
 	responseHeaders = setResponseHeaderMap(responseHeaderConfigJsonMap, requestHeaderMap)
 

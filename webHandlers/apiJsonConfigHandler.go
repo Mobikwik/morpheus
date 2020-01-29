@@ -17,7 +17,7 @@ import (
 	"url": "/api/p/wallet/debit",
 	"method": "POST",
 	"responseDelayInSeconds": 30,
-	"requestConfig": {
+	"requestMockValues": {
 		"requestHeaders": {
 			"Content-Type": ["application/json","text/html","application/pdf"],
 			"Authorization": "$Auth",
@@ -35,7 +35,7 @@ import (
 			}
 		}
 	},
-	"responseConfig": {
+	"responseMockValues": {
 		"httpCode": 200,
 		"responseHeaders": {
 			"X-DeviceId": "requestHeaders.X-DeviceId",
@@ -77,7 +77,7 @@ import (
 	"url": "/api/p/wallet/credit",
 	"method": "POST",
 	"responseDelayInSeconds": 30,
-	"requestConfig": {
+	"requestMockValues": {
 		"requestHeaders": {
 			"Content-Type": ["application/json","text/html","application/pdf"],
 			"Authorization": "$Auth",
@@ -95,7 +95,7 @@ import (
 			}
 		}
 	},
-	"responseConfig": {
+	"responseMockValues": {
 		"httpCode": 200,
 		"responseHeaders": {
 			"X-DeviceId": "requestHeaders.X-DeviceId",

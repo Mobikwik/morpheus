@@ -115,7 +115,7 @@ func runResponseBodyArrayTypeConfigTest(responseBodyConfigValue []interface{},
 		t.Errorf("error in parsing json")
 	}
 
-	actual := service.ProcessResponseConfigArrayType(responseBodyConfigValue, requestBodyJsonMap)
+	actual := service.ProcessResponseMockValuesArrayType(responseBodyConfigValue, requestBodyJsonMap)
 
 	isEqual := reflect.DeepEqual(expected, actual)
 	if !isEqual {

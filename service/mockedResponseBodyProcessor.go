@@ -17,14 +17,14 @@ func setResponseBodyMap(responseBodyConfigJsonMap map[string]interface{}, reques
 		switch responseBodyConfigValue := responseBodyConfigValueGenericType.(type) {
 
 		case []string:
-			for i, responseConfigValueSingle := range responseBodyConfigValue {
+			for i, responseMockValuesValueSingle := range responseBodyConfigValue {
 				responseBodyValueArr = append(responseBodyValueArr,
-					GetResponseBodyValueFromRequestBody(responseConfigValueSingle, requestBodyJsonMap))
+					GetResponseBodyValueFromRequestBody(responseMockValuesValueSingle, requestBodyJsonMap))
 				log.Printf("adding array value %v on index %d for header %s ", responseBodyValueArr[i], i, key)
 			}
 			responseBodyConfigJsonMap[key] = responseBodyValueArr
 		case []interface{}:
-			responseBodyConfigJsonMap[key] = ProcessResponseConfigArrayType(responseBodyConfigValue,
+			responseBodyConfigJsonMap[key] = ProcessResponseMockValuesArrayType(responseBodyConfigValue,
 				requestBodyJsonMap)
 		case string:
 			responseBodyConfigJsonMap[key] = GetResponseBodyValueFromRequestBody(responseBodyConfigValue, requestBodyJsonMap)
@@ -40,7 +40,7 @@ func setResponseBodyMap(responseBodyConfigJsonMap map[string]interface{}, reques
 	}
 }
 
-func ProcessResponseConfigArrayType(responseBodyConfigValue []interface{}, requestBodyJsonMap map[string]interface{}) []interface{} {
+func ProcessResponseMockValuesArrayType(responseBodyConfigValue []interface{}, requestBodyJsonMap map[string]interface{}) []interface{} {
 	var responseBodyValueArr []interface{}
 	for i, responseBodyConfigKeyValueSingle := range responseBodyConfigValue {
 		log.Printf("getting value for config %v", responseBodyConfigKeyValueSingle)

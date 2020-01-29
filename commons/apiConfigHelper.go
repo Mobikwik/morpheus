@@ -20,8 +20,8 @@ func FindMatchingApiConfig(urlToSearch string, requestHeader map[string][]string
 		json.Unmarshal([]byte(apiJsonFromDB), &apiConfigArray)
 		var apiConfig model.ApiConfig
 		for _, apiConfig = range apiConfigArray {
-			//configRequestHeader := apiConfig.RequestConfig.RequestHeaders
-			configRequestBody := apiConfig.RequestConfig.RequestJsonBody
+			//configRequestHeader := apiConfig.RequestMockValues.RequestHeadersMockValues
+			configRequestBody := apiConfig.RequestMockValues.RequestBodyMockValues
 			//check if request body values matches with one of the config values
 			if reflect.DeepEqual(configRequestBody, requestBodyMap) {
 				return &apiConfig

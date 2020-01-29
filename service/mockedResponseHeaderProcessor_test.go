@@ -62,7 +62,7 @@ func runResponseHeaderArrayTypeConfigTest(responseHeaderConfigValue []interface{
 		t.Errorf("error in parsing json")
 	}
 
-	actual := processResponseConfigArrayType(responseHeaderConfigValue, requestHeaderJsonMap)
+	actual := processResponseMockValuesArrayType(responseHeaderConfigValue, requestHeaderJsonMap)
 
 	if len(expected)!=len(actual){
 		t.Errorf("expected array value %v type %T actual value %v type %T", expected,expected, actual, actual)

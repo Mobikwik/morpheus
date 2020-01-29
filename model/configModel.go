@@ -1,18 +1,18 @@
 package model
 
-type Request struct {
+type MockRequest struct {
 	// Header config values can be of type string or []string.Hence using generic interface{} type
-	RequestHeaders map[string]interface{}
+	RequestHeadersMockValues map[string]interface{}
 	// request body can have many types as string,numeric,array,another struct etc.Hence using generic interface{} type
-	RequestJsonBody map[string]interface{}
+	RequestBodyMockValues map[string]interface{}
 }
 
-type Response struct {
+type MockResponse struct {
 	HttpCode int
 	// Header config values can be of type string or []string.Hence using generic interface{} type
-	ResponseHeaders map[string]interface{}
+	ResponseHeadersMockValues map[string]interface{}
 	// response body can have many types as string,numeric,array,another struct etc.Hence using generic interface{} type
-	ResponseJsonBody map[string]interface{}
+	ResponseBodyMockValues map[string]interface{}
 }
 
 type ApiConfig struct {
@@ -20,6 +20,6 @@ type ApiConfig struct {
 	Url                    string
 	Method                 string
 	ResponseDelayInSeconds int
-	RequestConfig          Request
-	ResponseConfig         Response
+	RequestMockValues      MockRequest
+	ResponseMockValues     MockResponse
 }

@@ -10,37 +10,37 @@ import (
 func setResponseHeaderMap(responseHeaderConfigJsonMap map[string]interface{}, requestHeaderMap map[string][]string) map[string][]string {
 
 	var responseHeaderValuesJsonMap = make(map[string][]string)
-	for headerName, responseConfigKeyValueGenericType := range responseHeaderConfigJsonMap {
+	for headerName, responseMockValuesKeyValueGenericType := range responseHeaderConfigJsonMap {
 
 		log.Printf("setting value for response header %s of type %T config value %s",
-			headerName, responseConfigKeyValueGenericType, responseConfigKeyValueGenericType)
+			headerName, responseMockValuesKeyValueGenericType, responseMockValuesKeyValueGenericType)
 
 		var responseHeaderValueArr []string
 
-		switch responseConfigKeyValue := responseConfigKeyValueGenericType.(type) {
+		switch responseMockValuesKeyValue := responseMockValuesKeyValueGenericType.(type) {
 		case string:
-			responseHeaderValueArr = GetResponseHeaderConfigValueFromRequestHeader(responseConfigKeyValue, requestHeaderMap)
+			responseHeaderValueArr = GetResponseHeaderConfigValueFromRequestHeader(responseMockValuesKeyValue, requestHeaderMap)
 			log.Printf("setting single value %s for header %s", responseHeaderValueArr, headerName)
 		/*case []string:
-		for i, responseConfigKeyValueSingle := range responseConfigKeyValue {
-			responseHeaderValueArr = append(responseHeaderValueArr, getResponseHeaderConfigValueFromRequestHeader(responseConfigKeyValueSingle, requestHeaderMap)[0])
+		for i, responseMockValuesKeyValueSingle := range responseMockValuesKeyValue {
+			responseHeaderValueArr = append(responseHeaderValueArr, getResponseHeaderConfigValueFromRequestHeader(responseMockValuesKeyValueSingle, requestHeaderMap)[0])
 			log.Printf("adding array value %s on index %d for header %s ", responseHeaderValueArr[i],i,headerName)
 		}*/
 		case []interface{}:
-			log.Printf("handling response header value config for header %s config type is %T", headerName, responseConfigKeyValueGenericType)
+			log.Printf("handling response header value config for header %s config type is %T", headerName, responseMockValuesKeyValueGenericType)
 
-			for i, responseConfigKeyValueSingle := range responseConfigKeyValue {
-				log.Printf("getting value for config %s", responseConfigKeyValueSingle)
-				responseConfigKeyValueSingleStr, ok := responseConfigKeyValueSingle.(string)
+			for i, responseMockValuesKeyValueSingle := range responseMockValuesKeyValue {
+				log.Printf("getting value for config %s", responseMockValuesKeyValueSingle)
+				responseMockValuesKeyValueSingleStr, ok := responseMockValuesKeyValueSingle.(string)
 				if ok {
-					responseHeaderValueArr = append(responseHeaderValueArr, GetResponseHeaderConfigValueFromRequestHeader(responseConfigKeyValueSingleStr, requestHeaderMap)[0])
+					responseHeaderValueArr = append(responseHeaderValueArr, GetResponseHeaderConfigValueFromRequestHeader(responseMockValuesKeyValueSingleStr, requestHeaderMap)[0])
 					log.Printf("adding array value %s on index %d for header %s ", responseHeaderValueArr[i], i, headerName)
 				}
 
 			}
 
 		default:
-			log.Printf("invalid response header value config for header %s config type is %T", headerName, responseConfigKeyValueGenericType)
+			log.Printf("invalid response header value config for header %s config type is %T", headerName, responseMockValuesKeyValueGenericType)
 
 		}
 

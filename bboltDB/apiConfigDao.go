@@ -18,11 +18,11 @@ ex:
 	"Url": "/api/p/wallet/testDebit1",
 	"Method": "POST",
 	"ResponseDelayInSeconds": 11,
-	"RequestConfig": {
-		"RequestHeaders": {
+	"RequestMockValues": {
+		"RequestHeadersMockValues": {
 			"X-DeviceId": "device123"
 		},
-		"RequestJsonBody": {
+		"RequestBodyMockValues": {
 			"action": "debit",
 			"module": "wallet",
 			"txnDetails": {
@@ -31,13 +31,13 @@ ex:
 			}
 		}
 	},
-	"ResponseConfig": {
+	"ResponseMockValues": {
 		"HttpCode": 200,
-		"ResponseHeaders": {
+		"ResponseHeadersMockValues": {
 			"Checksum": "fdjfn",
 			"X-DeviceId": "requestHeaders.X-DeviceId"
 		},
-		"ResponseJsonBody": {
+		"ResponseBodyMockValues": {
 			"actionDone": "requestJsonBody.action",
 			"statusMsg": "Debit Success"
 		}
@@ -47,11 +47,11 @@ ex:
 	"Url": "/api/p/wallet/testDebit1",
 	"Method": "POST",
 	"ResponseDelayInSeconds": 5,
-	"RequestConfig": {
-		"RequestHeaders": {
+	"RequestMockValues": {
+		"RequestHeadersMockValues": {
 			"X-DeviceId": "device657"
 		},
-		"RequestJsonBody": {
+		"RequestBodyMockValues": {
 			"action": "debit",
 			"module": "upi",
 			"txnDetails": {
@@ -60,13 +60,13 @@ ex:
 			}
 		}
 	},
-	"ResponseConfig": {
+	"ResponseMockValues": {
 		"HttpCode": 200,
-		"ResponseHeaders": {
+		"ResponseHeadersMockValues": {
 			"Checksum": "fggg",
 			"X-DeviceId": "requestHeaders.X-DeviceId"
 		},
-		"ResponseJsonBody": {
+		"ResponseBodyMockValues": {
 			"actionDone": "requestJsonBody.action",
 			"statusMsg": "Debit Failed"
 		}
