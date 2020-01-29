@@ -8,7 +8,7 @@ import (
 )
 
 /*
-We store api config as a key-value pair in BBoltDB. Key is the api url(string) and value is array of configs([]model.ApiConfig).
+We store api config as a key-value pair in BBoltDB. Key is the api url(string) and value is array of configs([]model.MockConfig).
 There can be multiple configs for one api.
 ex:
 /api/p/wallet/testDebit1:
@@ -74,29 +74,29 @@ ex:
 }]
 This function adds a new api config if there is already a config present.
 */
-func UpdateApiConfigInDB(bucketName, key string, apiConfigObj model.ApiConfig) uint64 {
+func UpdateMockConfigInDB(bucketName, key string, mockConfigObj model.MockConfig) uint64 {
 
 	log.Print("storing api config for key ", key)
 
 	var id uint64
-	var newApiConfigArr []model.ApiConfig
+	var newMockConfigArr []model.MockConfig
 	err1 := boltDBConnection.Update(func(tx *bbolt.Tx) error {
 		// bucket must be created/opened in same tx, hence passing tx in createBucket
 		bucket := createBucket(bucketName, tx)
 		id, _ = bucket.NextSequence()
-		apiConfigObj.Id = id
+		mockConfigObj.Id = id
 
 		// if there is already a config for this api, add this config in the existing config array
-		existingApiConfigJson, _ := ReadSingleKeyFromDB(bucketName, key)
-		if len(existingApiConfigJson) > 0 {
-			var existingApiConfigArr []model.ApiConfig
-			json.Unmarshal([]byte(existingApiConfigJson), &existingApiConfigArr)
-			newApiConfigArr = append(existingApiConfigArr, apiConfigObj)
+		existingMockConfigJson, _ := ReadSingleKeyFromDB(bucketName, key)
+		if len(existingMockConfigJson) > 0 {
+			var existingMockConfigArr []model.MockConfig
+			json.Unmarshal([]byte(existingMockConfigJson), &existingMockConfigArr)
+			newMockConfigArr = append(existingMockConfigArr, mockConfigObj)
 		} else {
-			newApiConfigArr = []model.ApiConfig{apiConfigObj}
+			newMockConfigArr = []model.MockConfig{mockConfigObj}
 		}
-		apiConfig, _ := json.Marshal(&newApiConfigArr)
-		err2 := bucket.Put([]byte(key), apiConfig)
+		mockConfig, _ := json.Marshal(&newMockConfigArr)
+		err2 := bucket.Put([]byte(key), mockConfig)
 		if nil != err2 {
 			log.Printf("error occured while updating DB %v", err2)
 			return err2

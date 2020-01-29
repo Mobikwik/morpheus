@@ -45,21 +45,21 @@ func DoMocking(url, requestMethod string, requestBody []byte,
 	}
 	log.Println("parsed request body json is ", requestBodyMap)
 
-	matchingApiConfig := commons.FindMatchingApiConfig(url, requestHeader, requestBodyMap)
-	if matchingApiConfig == nil {
+	matchingMockConfig := commons.FindMatchingMockConfig(url, requestHeader, requestBodyMap)
+	if matchingMockConfig == nil {
 		log.Printf("no matching config found for this api request")
 		responseBody = "no matching config found for this api request"
 	} else {
-		responseBody, responseHeaders := getMockedResponse(matchingApiConfig, requestBodyMap, requestHeader)
+		responseBody, responseHeaders := getMockedResponse(matchingMockConfig, requestBodyMap, requestHeader)
 
 		// check if api config has any setting for introducing delay in sending response. This is to test api timeouts
-		if matchingApiConfig.ResponseDelayInSeconds > 0 {
+		if matchingMockConfig.ResponseDelayInSeconds > 0 {
 			// time.Duration by default is in nanoseconds, converting it in seconds
-			var responseDelay = time.Duration(matchingApiConfig.ResponseDelayInSeconds) * time.Second
+			var responseDelay = time.Duration(matchingMockConfig.ResponseDelayInSeconds) * time.Second
 			log.Printf("introducing response delay of %s seconds", responseDelay)
 			time.Sleep(responseDelay)
 		}
-		return responseBody, responseHeaders, matchingApiConfig.ResponseMockValues.HttpCode
+		return responseBody, responseHeaders, matchingMockConfig.ResponseMockValues.HttpCode
 	}
 	/*} else {
 		log.Print("invalid Content-Type header", requestHeader[ContentTypeHeaderName])
@@ -68,13 +68,13 @@ func DoMocking(url, requestMethod string, requestBody []byte,
 	return responseBody, responseHeaders, 200
 }
 
-func getMockedResponse(apiConfig *model.ApiConfig, requestBodyJsonMap map[string]interface{},
+func getMockedResponse(mockConfig *model.MockConfig, requestBodyJsonMap map[string]interface{},
 	requestHeaderMap map[string][]string) (string, map[string][]string) {
 
 	var responseBody string
 	var responseHeaders map[string][]string
 
-	responseBodyConfigJsonMap := apiConfig.ResponseMockValues.ResponseBodyMockValues
+	responseBodyConfigJsonMap := mockConfig.ResponseMockValues.ResponseBodyMockValues
 	// set the values in response json map based on response config
 	setResponseBodyMap(responseBodyConfigJsonMap, requestBodyJsonMap)
 	responseBodyBytes, err := json.Marshal(responseBodyConfigJsonMap)
@@ -82,7 +82,7 @@ func getMockedResponse(apiConfig *model.ApiConfig, requestBodyJsonMap map[string
 		responseBody = string(responseBodyBytes)
 	}
 	// set response headers
-	responseHeaderConfigJsonMap := apiConfig.ResponseMockValues.ResponseHeadersMockValues
+	responseHeaderConfigJsonMap := mockConfig.ResponseMockValues.ResponseHeadersMockValues
 	// set the values in response json map based on response config
 	responseHeaders = setResponseHeaderMap(responseHeaderConfigJsonMap, requestHeaderMap)
 

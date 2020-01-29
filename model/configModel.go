@@ -15,7 +15,7 @@ type MockResponse struct {
 	ResponseBodyMockValues map[string]interface{}
 }
 
-type ApiConfig struct {
+type MockConfig struct {
 	Id                     uint64
 	Url                    string
 	Method                 string

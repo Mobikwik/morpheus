@@ -9,9 +9,9 @@ import (
 	"net/http"
 )
 
-/*func readApiConfigFromDB() string {
+/*func readMockConfigFromDB() string {
 
-	testApiConfigJson := `[
+	testMockConfigJson := `[
 {
 	"id":"1",
 	"url": "/api/p/wallet/debit",
@@ -132,29 +132,29 @@ import (
 	}
 }
 	]`
-	return testApiConfigJson
+	return testMockConfigJson
 }
 */
 /*
-func getApiConfigArray() []ApiConfig {
-	var apiConfigJson = readApiConfigFromDB()
-	return parseApiConfig(apiConfigJson)
+func getMockConfigArray() []MockConfig {
+	var mockConfigJson = readMockConfigFromDB()
+	return parseMockConfig(mockConfigJson)
 }
 
-func parseApiConfig(apiConfigJson string) []ApiConfig {
-	log.Print(apiConfigJson)
-	var apiConfig []ApiConfig
-	json.Unmarshal([]byte(apiConfigJson), &apiConfig)
-	for i, v := range apiConfig {
-		log.Print("apiConfig values for i= ", i, v)
+func parseMockConfig(mockConfigJson string) []MockConfig {
+	log.Print(mockConfigJson)
+	var mockConfig []MockConfig
+	json.Unmarshal([]byte(mockConfigJson), &mockConfig)
+	for i, v := range mockConfig {
+		log.Print("mockConfig values for i= ", i, v)
 	}
-	log.Print("apiConfig values: ", apiConfig)
-	return apiConfig
+	log.Print("mockConfig values: ", mockConfig)
+	return mockConfig
 }*/
 
 // Return API config stored in DB
-func apiConfigWebGetHandler(w http.ResponseWriter, r *http.Request) {
-	log.Print("inside apiConfigWebGetHandler")
+func mockConfigWebGetHandler(w http.ResponseWriter, r *http.Request) {
+	log.Print("inside mockConfigWebGetHandler")
 	queryStringValues := r.URL.Query()
 	var apiKey string
 	if len(queryStringValues) >= 1 {
@@ -163,32 +163,32 @@ func apiConfigWebGetHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	// fetch all configs
 	if len(apiKey) == 0 {
-		data := commons.ReadEntireApiConfigFromDB()
+		data := commons.ReadEntireMockConfigFromDB()
 		fmt.Fprintf(w, "%v", data)
 	} else {
-		data := commons.ReadSingleApiConfigFromDB(apiKey)
+		data := commons.ReadSingleMockConfigFromDB(apiKey)
 		fmt.Fprintf(w, "%v", data)
 	}
-	log.Print("exiting apiConfigWebGetHandler")
+	log.Print("exiting mockConfigWebGetHandler")
 }
 
 // Create new API config
-func apiConfigWebPostHandler(w http.ResponseWriter, r *http.Request) {
-	log.Print("inside apiConfigWebPostHandler")
+func mockConfigWebPostHandler(w http.ResponseWriter, r *http.Request) {
+	log.Print("inside mockConfigWebPostHandler")
 
 	requestBody := commons.ReadFromRequestBody(r.Body)
 	requestBodyJsonString := string(requestBody)
 
-	var newApiConfig model.ApiConfig
-	err := json.Unmarshal(requestBody, &newApiConfig)
+	var newMockConfig model.MockConfig
+	err := json.Unmarshal(requestBody, &newMockConfig)
 	if err != nil {
 		panic(err)
 	}
 	log.Println("parsed request body json for new api config is ", requestBodyJsonString)
 
-	apiKey := newApiConfig.Url
-	id := commons.StoreApiConfigInDB(requestBodyJsonString, apiKey)
+	apiKey := newMockConfig.Url
+	id := commons.StoreMockConfigInDB(requestBodyJsonString, apiKey)
 	fmt.Fprintf(w, "%v %d", "api config stored in DB with id ", id)
 
-	log.Print("exiting apiConfigWebPostHandler")
+	log.Print("exiting mockConfigWebPostHandler")
 }
