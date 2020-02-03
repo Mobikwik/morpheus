@@ -25,7 +25,7 @@ import (
 			"X-ClientId": "$ClientId",
 			"X-Checksum": "hfsdhfbudgwq8gdqwudqu"
 		},
-		"requestJsonBody": {
+		"requestBodyMockValues": {
 			"action": "debit",
 			"module": "wallet",
 			"txnDetails": {
@@ -49,17 +49,17 @@ import (
 		},
 
 		"responseJsonBody": {
-			"actionDone": "requestJsonBody.action",
+			"actionDone": "requestBodyMockValues.action",
 			"statusCode": "$statusCode",
 			"statusMsg": "Debit Success",
-			"orderId": "requestJsonBody.txnDetails.orderId",
-			"consideredTxnTypes":["requestJsonBody.txnDetails.txnTypes[0]","requestJsonBody.txnDetails.txnTypes[1]"],
-			"processedTxnType":	"requestJsonBody.txnDetails.txnTypes[0]",
-			"allTxnTypes":"requestJsonBody.txnDetails.txnTypes",
+			"orderId": "requestBodyMockValues.txnDetails.orderId",
+			"consideredTxnTypes":["requestBodyMockValues.txnDetails.txnTypes[0]","requestBodyMockValues.txnDetails.txnTypes[1]"],
+			"processedTxnType":	"requestBodyMockValues.txnDetails.txnTypes[0]",
+			"allTxnTypes":"requestBodyMockValues.txnDetails.txnTypes",
 			"amountDetails":{
-				"amountDebited":"requestJsonBody.txnDetails.amount"
+				"amountDebited":"requestBodyMockValues.txnDetails.amount"
 			},
-			"requestTxnDetails":"requestJsonBody.txnDetails",
+			"requestTxnDetails":"requestBodyMockValues.txnDetails",
 			"balanceData": {
 				"mainBalance": 1023,
 				"buckets": {
@@ -85,7 +85,7 @@ import (
 			"X-ClientId": "$ClientId",
 			"X-Checksum": "hfsdhfbudgwq8gdqwudqu"
 		},
-		"requestJsonBody": {
+		"requestBodyMockValues": {
 			"action": "debit",
 			"module": "wallet",
 			"txnDetails": {
@@ -109,17 +109,17 @@ import (
 		},
 
 		"responseJsonBody": {
-			"actionDone": "requestJsonBody.action",
+			"actionDone": "requestBodyMockValues.action",
 			"statusCode": "$statusCode",
 			"statusMsg": "Debit Success",
-			"orderId": "requestJsonBody.txnDetails.orderId",
-			"consideredTxnTypes":["requestJsonBody.txnDetails.txnTypes[0]","requestJsonBody.txnDetails.txnTypes[1]"],
-			"processedTxnType":	"requestJsonBody.txnDetails.txnTypes[0]",
-			"allTxnTypes":"requestJsonBody.txnDetails.txnTypes",
+			"orderId": "requestBodyMockValues.txnDetails.orderId",
+			"consideredTxnTypes":["requestBodyMockValues.txnDetails.txnTypes[0]","requestBodyMockValues.txnDetails.txnTypes[1]"],
+			"processedTxnType":	"requestBodyMockValues.txnDetails.txnTypes[0]",
+			"allTxnTypes":"requestBodyMockValues.txnDetails.txnTypes",
 			"amountDetails":{
-				"amountDebited":"requestJsonBody.txnDetails.amount"
+				"amountDebited":"requestBodyMockValues.txnDetails.amount"
 			},
-			"requestTxnDetails":"requestJsonBody.txnDetails",
+			"requestTxnDetails":"requestBodyMockValues.txnDetails",
 			"balanceData": {
 				"mainBalance": 1023,
 				"buckets": {

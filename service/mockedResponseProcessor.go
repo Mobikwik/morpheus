@@ -8,11 +8,6 @@ import (
 	"time"
 )
 
-const (
-	ContentTypeHeaderName      = "Content-Type"
-	ContentTypeHeaderValueJson = "application/json"
-)
-
 /*
 func recoverConfigError2() string {
 	if r := recover(); r!= nil {
@@ -45,7 +40,7 @@ func DoMocking(url, requestMethod string, requestBody []byte,
 	}
 	log.Println("parsed request body json is ", requestBodyMap)
 
-	matchingMockConfig := commons.FindMatchingMockConfig(url, requestHeader, requestBodyMap)
+	matchingMockConfig := commons.FindMatchingMockConfig(url, requestMethod, requestBodyMap)
 	if matchingMockConfig == nil {
 		log.Printf("no matching config found for this api request")
 		responseBody = "no matching config found for this api request"
@@ -69,10 +64,7 @@ func DoMocking(url, requestMethod string, requestBody []byte,
 }
 
 func getMockedResponse(mockConfig *model.MockConfig, requestBodyJsonMap map[string]interface{},
-	requestHeaderMap map[string][]string) (string, map[string][]string) {
-
-	var responseBody string
-	var responseHeaders map[string][]string
+	requestHeaderMap map[string][]string) (responseBody string, responseHeaders map[string][]string) {
 
 	responseBodyConfigJsonMap := mockConfig.ResponseMockValues.ResponseBodyMockValues
 	// set the values in response json map based on response config

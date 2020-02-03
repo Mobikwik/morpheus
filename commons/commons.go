@@ -7,13 +7,13 @@ import (
 	"reflect"
 )
 
-func ReadFromRequestBody(body io.ReadCloser) []byte {
+func ReadFromRequestBody(body io.ReadCloser) (requestBodyAsBytesArray []byte) {
 	if body != nil {
-		bodyBytes, err := ioutil.ReadAll(body)
+		requestBodyAsBytesArray, err := ioutil.ReadAll(body)
 		if err != nil {
 			panic(err)
 		}
-		return bodyBytes
+		return requestBodyAsBytesArray
 	}
 	return []byte{}
 }

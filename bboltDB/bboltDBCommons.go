@@ -26,8 +26,7 @@ func OpenDBConnection(dbPath string, dbConnectTimeoutInSeconds int) {
 	}
 }
 
-func createBucket(bucketName string, tx *bbolt.Tx) *bbolt.Bucket {
-	var err error
+func createBucket(bucketName string, tx *bbolt.Tx) (bucket *bbolt.Bucket) {
 	bucket, err := tx.CreateBucketIfNotExists([]byte(bucketName))
 	if err != nil {
 		panic(err)

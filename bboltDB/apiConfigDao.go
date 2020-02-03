@@ -38,7 +38,7 @@ ex:
 			"X-DeviceId": "requestHeaders.X-DeviceId"
 		},
 		"ResponseBodyMockValues": {
-			"actionDone": "requestJsonBody.action",
+			"actionDone": "requestBodyMockValues.action",
 			"statusMsg": "Debit Success"
 		}
 	}
@@ -67,24 +67,23 @@ ex:
 			"X-DeviceId": "requestHeaders.X-DeviceId"
 		},
 		"ResponseBodyMockValues": {
-			"actionDone": "requestJsonBody.action",
+			"actionDone": "requestBodyMockValues.action",
 			"statusMsg": "Debit Failed"
 		}
 	}
 }]
 This function adds a new api config if there is already a config present.
 */
-func UpdateMockConfigInDB(bucketName, key string, mockConfigObj model.MockConfig) uint64 {
+func UpdateMockConfigInDB(bucketName, key string, mockConfigObj model.MockConfig) (newConfigId uint64) {
 
 	log.Print("storing api config for key ", key)
 
-	var id uint64
 	var newMockConfigArr []model.MockConfig
 	err1 := boltDBConnection.Update(func(tx *bbolt.Tx) error {
 		// bucket must be created/opened in same tx, hence passing tx in createBucket
 		bucket := createBucket(bucketName, tx)
-		id, _ = bucket.NextSequence()
-		mockConfigObj.Id = id
+		newConfigId, _ = bucket.NextSequence()
+		mockConfigObj.Id = newConfigId
 
 		// if there is already a config for this api, add this config in the existing config array
 		existingMockConfigJson, _ := ReadSingleKeyFromDB(bucketName, key)
@@ -107,14 +106,13 @@ func UpdateMockConfigInDB(bucketName, key string, mockConfigObj model.MockConfig
 	if nil != err1 {
 		panic(err1)
 	}
-	log.Printf("api config stored in db with id %v", id)
-	return id
+	log.Printf("api config stored in db with id %v", newConfigId)
+	return newConfigId
 }
 
-func ReadSingleKeyFromDB(bucketName, key string) (string, error) {
+func ReadSingleKeyFromDB(bucketName, key string) (data string, err error) {
 
-	var data string
-	err := boltDBConnection.View(func(tx *bbolt.Tx) error {
+	err = boltDBConnection.View(func(tx *bbolt.Tx) error {
 		//bucket:= createBucket(bucketName,tx)
 		bucket := tx.Bucket([]byte(bucketName))
 		dataBytes := bucket.Get([]byte(key))
@@ -129,19 +127,17 @@ func ReadSingleKeyFromDB(bucketName, key string) (string, error) {
 	return data, nil
 }
 
-func ReadAllKeysFromDB(bucketName string) map[string]string {
-
-	data := make(map[string]string)
+func ReadAllKeysFromDB(bucketName string) (mapOfAllKeyValues map[string]string) {
 
 	boltDBConnection.View(func(tx *bbolt.Tx) error {
 		//bucket:= createBucket(bucketName,tx)
 		bucket := tx.Bucket([]byte(bucketName))
 
 		bucket.ForEach(func(k, v []byte) error {
-			data[string(k)] = string(v)
+			mapOfAllKeyValues[string(k)] = string(v)
 			return nil
 		})
 		return nil
 	})
-	return data
+	return mapOfAllKeyValues
 }

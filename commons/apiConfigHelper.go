@@ -6,9 +6,10 @@ import (
 	"github.com/Mobikwik/morpheus/model"
 	"log"
 	"reflect"
+	"strings"
 )
 
-func FindMatchingMockConfig(urlToSearch string, requestHeader map[string][]string,
+func FindMatchingMockConfig(urlToSearch string, requestMethod string,
 	requestBodyMap map[string]interface{}) *model.MockConfig {
 
 	log.Printf("inside findMatchingMockConfig to find matching config for url %s", urlToSearch)
@@ -21,9 +22,11 @@ func FindMatchingMockConfig(urlToSearch string, requestHeader map[string][]strin
 		var mockConfig model.MockConfig
 		for _, mockConfig = range mockConfigArray {
 			//configRequestHeader := mockConfig.RequestMockValues.RequestHeadersMockValues
+			configRequestMethod := mockConfig.Method
+			strings.Compare("", "")
 			configRequestBody := mockConfig.RequestMockValues.RequestBodyMockValues
-			//check if request body values matches with one of the config values
-			if reflect.DeepEqual(configRequestBody, requestBodyMap) {
+			//check if request method and body values matches with one of the config values
+			if configRequestMethod == requestMethod && reflect.DeepEqual(configRequestBody, requestBodyMap) {
 				return &mockConfig
 				/*	 if request body matches, check for request header values. Actual request might contain extra headers,
 				so we check if headers present in config exists in actual request(requestHeader)

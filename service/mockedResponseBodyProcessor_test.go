@@ -15,7 +15,7 @@ func TestResponseBodyConfig_ForSimpleValueFromRequestBody(t *testing.T) {
 
 func TestResponseBodyConfig_ForNestedValueFromRequestBody(t *testing.T) {
 
-	responseBodyConfigValue := "requestJsonBody.txnDetails.orderId"
+	responseBodyConfigValue := "requestBodyMockValues.txnDetails.orderId"
 	expected := "abcd"
 
 	runResponseBodyConfigTest(responseBodyConfigValue, expected, t)
@@ -23,7 +23,7 @@ func TestResponseBodyConfig_ForNestedValueFromRequestBody(t *testing.T) {
 
 func TestResponseBodyConfig_ForNestedSingleArrayValueFromRequestBody(t *testing.T) {
 
-	responseBodyConfigValue := "requestJsonBody.txnDetails.txnTypes[2]"
+	responseBodyConfigValue := "requestBodyMockValues.txnDetails.txnTypes[2]"
 	expected := "2"
 
 	runResponseBodyConfigTest(responseBodyConfigValue, expected, t)
@@ -32,12 +32,12 @@ func TestResponseBodyConfig_ForNestedSingleArrayValueFromRequestBody(t *testing.
 func TestResponseBodyConfig_ForNestedSingleArrayValueFromRequestBodyForInvalidConfigs(t *testing.T) {
 
 	// Invalid array index
-	responseBodyConfigValue := "requestJsonBody.txnDetails.txnTypes[a]"
+	responseBodyConfigValue := "requestBodyMockValues.txnDetails.txnTypes[a]"
 	var expected interface{} = nil
 	runResponseBodyConfigTest(responseBodyConfigValue, expected, t)
 
 	// Invalid nested config
-	responseBodyConfigValue = "requestJsonBody."
+	responseBodyConfigValue = "requestBodyMockValues."
 	expected = nil
 	runResponseBodyConfigTest(responseBodyConfigValue, expected, t)
 }
@@ -45,8 +45,8 @@ func TestResponseBodyConfig_ForNestedSingleArrayValueFromRequestBodyForInvalidCo
 func TestResponseBodyConfig_ForNestedMultipleArrayValueFromRequestBody(t *testing.T) {
 
 	responseBodyConfigValue := []interface{}{
-		"requestJsonBody.txnDetails.txnTypes[2]",
-		"requestJsonBody.txnDetails.txnTypes[3]",
+		"requestBodyMockValues.txnDetails.txnTypes[2]",
+		"requestBodyMockValues.txnDetails.txnTypes[3]",
 	}
 	expected := []interface{}{"2", "3"}
 	runResponseBodyArrayTypeConfigTest(responseBodyConfigValue, expected, t)
@@ -88,7 +88,7 @@ func TestResponseBodyConfig_ForNestedMultipleArrayValueFromRequestBody(t *testin
 
 func TestResponseBodyConfig_ForNestedEntireArrayFromRequestBody(t *testing.T) {
 
-	responseBodyConfigValue := "requestJsonBody.txnDetails.txnTypes"
+	responseBodyConfigValue := "requestBodyMockValues.txnDetails.txnTypes"
 	expected := []interface{}{"0", "1", "2", "3"}
 
 	runResponseBodyConfigTest(responseBodyConfigValue, expected, t)
@@ -96,7 +96,7 @@ func TestResponseBodyConfig_ForNestedEntireArrayFromRequestBody(t *testing.T) {
 
 func TestResponseBodyConfig_ForObjectValueFromRequestBody(t *testing.T) {
 
-	responseBodyConfigValue := "requestJsonBody.txnDetails"
+	responseBodyConfigValue := "requestBodyMockValues.txnDetails"
 	expected := map[string]interface{}{
 		"orderId":  "abcd",
 		"amount":   "123",

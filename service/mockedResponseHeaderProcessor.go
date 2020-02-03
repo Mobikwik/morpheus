@@ -7,9 +7,8 @@ import (
 	"strings"
 )
 
-func setResponseHeaderMap(responseHeaderConfigJsonMap map[string]interface{}, requestHeaderMap map[string][]string) map[string][]string {
+func setResponseHeaderMap(responseHeaderConfigJsonMap map[string]interface{}, requestHeaderMap map[string][]string) (responseHeaderValuesJsonMap map[string][]string) {
 
-	var responseHeaderValuesJsonMap = make(map[string][]string)
 	for headerName, responseMockValuesKeyValueGenericType := range responseHeaderConfigJsonMap {
 
 		log.Printf("setting value for response header %s of type %T config value %s",

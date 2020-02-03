@@ -40,8 +40,7 @@ func setResponseBodyMap(responseBodyConfigJsonMap map[string]interface{}, reques
 	}
 }
 
-func ProcessResponseMockValuesArrayType(responseBodyConfigValue []interface{}, requestBodyJsonMap map[string]interface{}) []interface{} {
-	var responseBodyValueArr []interface{}
+func ProcessResponseMockValuesArrayType(responseBodyConfigValue []interface{}, requestBodyJsonMap map[string]interface{}) (responseBodyValueArr []interface{}) {
 	for i, responseBodyConfigKeyValueSingle := range responseBodyConfigValue {
 		log.Printf("getting value for config %v", responseBodyConfigKeyValueSingle)
 		responseBodyValueArr = append(responseBodyValueArr,
@@ -67,7 +66,7 @@ func GetResponseBodyValueFromRequestBody(responseBodyConfigValue interface{}, re
 	switch responseBodyConfigValueTyped := responseBodyConfigValue.(type) {
 
 	case string:
-		if strings.HasPrefix(responseBodyConfigValueTyped, "requestJsonBody.") {
+		if strings.HasPrefix(responseBodyConfigValueTyped, "requestBodyMockValues.") {
 
 			responseBodyConfigValueSplit := strings.Split(responseBodyConfigValueTyped, ".")
 
@@ -78,21 +77,21 @@ func GetResponseBodyValueFromRequestBody(responseBodyConfigValue interface{}, re
 			ok1 := false
 
 			/*	get the value of first nesting level object reference
-					for ex: if config is requestJsonBody.orderDetails.addressDetails.pincode, get value of requestJsonBody["orderDetails"]
+					for ex: if config is requestBodyMockValues.orderDetails.addressDetails.pincode, get value of requestBodyMockValues["orderDetails"]
 					and store in requestBodyValueInterfaceType
 				   Value can be of any type (string,number or another nested object, so storing in interface{} type)
 			*/
 			requestBodyValueInterfaceType = requestBodyJsonMap[responseBodyConfigValueSplit[1]]
 
 			/* process all the nested object references from 2nd level onwards by looping around the array split with seperator ".",
-			   i.e. iteration i=1: get value of requestJsonBody.[orderDetails].[addressDetails] from requestBodyValueInterfaceType and store in requestBodyValueInterfaceType
-					iteration i=2: get value of requestJsonBody.[orderDetails].[addressDetails].pincode from requestBodyValueInterfaceType and store in requestBodyValueInterfaceType
+			   i.e. iteration i=1: get value of requestBodyMockValues.[orderDetails].[addressDetails] from requestBodyValueInterfaceType and store in requestBodyValueInterfaceType
+					iteration i=2: get value of requestBodyMockValues.[orderDetails].[addressDetails].pincode from requestBodyValueInterfaceType and store in requestBodyValueInterfaceType
 			*/
 			for i := 1; i < len(responseBodyConfigValueSplit); i++ {
 
 				/* requestBodyValueMapOfInterfaceType is typecast of requestBodyValueInterfaceType from interface{} type to map[string]interface{}
-				 i.e. value of requestJsonBody.[orderDetails].[addressDetails] is a nested json, so storing this value in
-				requestBodyValueMapOfInterfaceType to extract further values (like requestJsonBody.[orderDetails].[addressDetails].pincode) from it in next iteration
+				 i.e. value of requestBodyMockValues.[orderDetails].[addressDetails] is a nested json, so storing this value in
+				requestBodyValueMapOfInterfaceType to extract further values (like requestBodyMockValues.[orderDetails].[addressDetails].pincode) from it in next iteration
 				*/
 				// Don't use ":=" for value assignment as it will redeclare requestBodyValueMapOfInterfaceType as a new local variable in each iteration
 				requestBodyValueMapOfInterfaceType, ok1 = requestBodyValueInterfaceType.(map[string]interface{})
@@ -102,7 +101,7 @@ func GetResponseBodyValueFromRequestBody(responseBodyConfigValue interface{}, re
 
 					jsonKeyName := responseBodyConfigValueSplit[i+1]
 
-					/* if config is like $requestJsonBody.txnTypes[2], get the array index part,i.e. 2
+					/* if config is like $requestBodyMockValues.txnTypes[2], get the array index part,i.e. 2
 					responseBodyConfigValueSplit[1] = txnTypes[2], len(responseBodyConfigValueSplit[1]) =11,so:
 					openingBracketIndex(index of [) = 8 = 11-3
 					closingBracketIndex(index of ]) = 10 = 11-1
@@ -140,13 +139,13 @@ func GetResponseBodyValueFromRequestBody(responseBodyConfigValue interface{}, re
 						requestBodyValueInterfaceType = requestBodyValueMapOfInterfaceType[jsonKeyName]
 					}
 				} else {
-					/* reached end of nested values i.e. requestJsonBody.[orderDetails].[addressDetails].pincode, no more iterations possible,
+					/* reached end of nested values i.e. requestBodyMockValues.[orderDetails].[addressDetails].pincode, no more iterations possible,
 					so return the final value from request body */
 					return requestBodyValueInterfaceType
 				}
 			}
 		} else {
-			// response config does not start with "requestJsonBody.", so it's hard-coded value, so return that value as it is
+			// response config does not start with "requestBodyMockValues.", so it's hard-coded value, so return that value as it is
 			return responseBodyConfigValue
 		}
 	default:
