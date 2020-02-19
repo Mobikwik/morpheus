@@ -1,4 +1,6 @@
 # Download, Setup and Test Go as described here: https://golang.org/doc/install in directory /usr/goInstallation. 
+
+echo "***************Installing GoLang 1.13.8**********************"
 cd /usr
 mkdir /usr/goInstallation
 cd goInstallation
@@ -14,6 +16,7 @@ export PATH=$PATH:/usr/goInstallation/go/bin
 export GOPATH=/usr/goLangProjects
 
 # Clone Morpheus repo from github in GoLang workspace
+echo "***************cloning Morpheus github repo*********************"
 cd /usr/goLangProjects
 git clone git@github.com:Mobikwik/morpheus.git
 
@@ -21,10 +24,14 @@ git clone git@github.com:Mobikwik/morpheus.git
 cd morpheus
 
 # Below command will skip the _test file and run Morpheus on port 8080 (port mentioned in env.properties). 
-# It will also send the logs to file morpheusLog.log
+# It will also send the logs to file /tmp/morpheusLog.log
+echo "****************Running Morpheus*****************"
 go run $(ls -t | grep -v _test | grep .go) env.properties > morpheusLog.log 2>&1 &
 
 # Test if Morpheus has run successfully.
+echo "****************Checking if Morpheus has run successfully*******************"
+# Adding sleep to wait for Morpheus to start. Then hitting cURL. 
+sleep 5
 curl -X GET -i http://localhost:8080
 
 
@@ -32,4 +39,3 @@ curl -X GET -i http://localhost:8080
 # go test exec: "gcc": executable file not found in $PATH
 # Set below environment variable
 export CGO_ENABLED=0
-
