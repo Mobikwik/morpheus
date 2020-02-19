@@ -4,7 +4,14 @@
 export PATH=$PATH:/home/user/go1.12.5.linux-amd64/go/bin
 export GOPATH=/home/user/goLangProjects
 
-# Now we are ready to run Morpheus. Below command will skip the _test file and run Morpheus on port 8080 (port mentioned in env.properties). 
+# Clone Morpheus repo from github in GoLang workspace
+cd /home/user/goLangProjects
+git clone git@github.com:Mobikwik/morpheus.git
+
+# Now we are ready to run Morpheus. Switch to "morpheus" directory.
+cd src/github.com/Mobikwik/morpheus
+
+# Below command will skip the _test file and run Morpheus on port 8080 (port mentioned in env.properties). 
 # It will also send the logs to file /tmp/morpheusLog.log
 go run $(ls -t | grep -v _test | grep .go) env.properties > /tmp/morpheusLog.log 2>&1 &
 
