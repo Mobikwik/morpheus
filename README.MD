@@ -13,13 +13,4 @@ Go to [Wiki](https://github.com/Mobikwik/morpheus/wiki) for details.
 
 ## Setup
 
-
-```
-$ git clone git@github.com:Mobikwik/morpheus.git
-$ cd morpheus
-
-```
-
-git clone git@github.com:Mobikwik/morpheus.git
-
-Morpheus provides a [setup script](https://github.com/Mobikwik/morpheus/blob/master/goMorpheus.sh) for Linux.
+Use the Morpheus setup script [goMorpheus.sh](https://github.com/Mobikwik/morpheus/blob/master/goMorpheus.sh) for Linux.
