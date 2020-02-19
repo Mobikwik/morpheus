@@ -21,7 +21,7 @@ git clone git@github.com:Mobikwik/morpheus.git
 cd morpheus
 
 # Below command will skip the _test file and run Morpheus on port 8080 (port mentioned in env.properties). 
-# It will also send the logs to file /tmp/morpheusLog.log
+# It will also send the logs to file morpheusLog.log
 go run $(ls -t | grep -v _test | grep .go) env.properties > morpheusLog.log 2>&1 &
 
 # Test if Morpheus has run successfully.
@@ -32,3 +32,4 @@ curl -X GET -i http://localhost:8080
 # go test exec: "gcc": executable file not found in $PATH
 # Set below environment variable
 export CGO_ENABLED=0
+
