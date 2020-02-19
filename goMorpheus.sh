@@ -1,11 +1,20 @@
-# Download,Setup and Test Go as described here: https://golang.org/doc/install. 
+# Download, Setup and Test Go as described here: https://golang.org/doc/install in directory /home/goInstallation. 
+cd /home
+mkdir /home/goInstallation
+cd goInstallation
+wget https://dl.google.com/go/go1.13.8.linux-amd64.tar.gz
+tar -C /home/goInstallation -xzf go1.13.8.linux-amd64.tar.gz
+
+# Make GoLang workspace directory goLangProjects
+cd /home
+mkdir goLangProjects
 
 # Setup PATH and GOPATH environment variables.
-export PATH=$PATH:/home/user/go1.12.5.linux-amd64/go/bin
-export GOPATH=/home/user/goLangProjects
+export PATH=$PATH:/home/goInstallation/go/bin
+export GOPATH=/home/goLangProjects
 
 # Clone Morpheus repo from github in GoLang workspace
-cd /home/user/goLangProjects
+cd /home/goLangProjects
 git clone git@github.com:Mobikwik/morpheus.git
 
 # Now we are ready to run Morpheus. Switch to "morpheus" directory.
