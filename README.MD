@@ -14,3 +14,12 @@ Go to [Wiki](https://github.com/Mobikwik/morpheus/wiki) for details.
 ## Setup
 
 Use the Morpheus setup script [goMorpheus.sh](https://github.com/Mobikwik/morpheus/blob/master/goMorpheus.sh) for Linux.
+
+### Unit Testing
+
+To run unit tests supplied with Morpheus, run below command in morpheus directory.
+
+```
+go test ./...
+```
+
