@@ -1,4 +1,5 @@
-# Download, Setup and Test Go as described here: https://golang.org/doc/install in directory /usr/goInstallation. 
+# Download, Install and Test Go Setup as described here: https://golang.org/doc/install 
+# This script installs Go in /usr/goInstallation directory. 
 
 echo "***************Installing GoLang 1.13.8**********************"
 cd /usr
@@ -7,7 +8,7 @@ cd goInstallation
 wget https://dl.google.com/go/go1.13.8.linux-amd64.tar.gz
 tar -C /usr/goInstallation -xzf go1.13.8.linux-amd64.tar.gz
 
-# Make GoLang workspace directory goLangProjects
+# Make GoLang workspace directory /usr/goLangProjects
 cd /usr
 mkdir goLangProjects
 
@@ -24,7 +25,7 @@ git clone git@github.com:Mobikwik/morpheus.git
 cd morpheus
 
 # Below command will skip the _test file and run Morpheus on port 8080 (port mentioned in env.properties). 
-# It will also send the logs to file /tmp/morpheusLog.log
+# It will also send the logs to file morpheusLog.log
 echo "****************Running Morpheus*****************"
 go run $(ls -t | grep -v _test | grep .go) env.properties > morpheusLog.log 2>&1 &
 
@@ -37,5 +38,5 @@ curl -X GET -i http://localhost:8080
 
 # If you face below error msg while running go test:
 # go test exec: "gcc": executable file not found in $PATH
-# Set below environment variable
-export CGO_ENABLED=0
+# Uncomment below line to Set CGO_ENABLED=0 environment variable
+# export CGO_ENABLED=0
