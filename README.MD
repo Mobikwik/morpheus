@@ -23,6 +23,12 @@ To run unit tests supplied with Morpheus, run below command in morpheus director
 go test ./...
 ```
 
+To check the test coverage, run below:
+
+
+```
+go test -cover
+```
 ## Contribution
 Contributions in the form of issues or pull requests are more than welcome! Make sure to follow Morpheus [issues](https://github.com/Mobikwik/morpheus/issues).
 
