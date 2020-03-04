@@ -24,7 +24,7 @@ go test ./...
 ```
 
 ## Contribution
-Contributions in the form of issues or pull requests are more than welcome! Make sure to follow Morpheus [issues].
+Contributions in the form of issues or pull requests are more than welcome! Make sure to follow Morpheus [issues](https://github.com/Mobikwik/morpheus/issues).
 
 ### Pull Requests
 
